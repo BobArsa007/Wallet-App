@@ -3,480 +3,816 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta name="theme-color" content="#000000">
+  <meta name="theme-color" content="#f2f2f7">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="icon" href="icon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&display=swap" rel="stylesheet">
   <title>Dompet</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap');
-
     :root {
-      --bg: #050507;
-      --surface: #111116;
-      --surface-raised: #16161d;
-      --surface-hover: #1c1c26;
-      --border: rgba(255,255,255,0.06);
-      --border-subtle: rgba(255,255,255,0.04);
-      --text: #f5f5f7;
-      --text-secondary: rgba(245,245,247,0.52);
-      --text-tertiary: rgba(245,245,247,0.28);
-      --green: #30d158;
-      --green-dim: rgba(48,209,88,0.13);
-      --blue: #0a84ff;
-      --blue-dim: rgba(10,132,255,0.13);
-      --red: #ff453a;
-      --red-dim: rgba(255,69,58,0.11);
-      --r-card: 22px;
-      --r-pill: 100px;
-      --r-md: 14px;
-      --ease-out: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      --bg: #f2f2f7;
+      --bg2: #e5e5ea;
+      --surface: #ffffff;
+      --surface-hover: #f8f8fb;
+      --border: rgba(0,0,0,0.07);
+      --border-strong: rgba(0,0,0,0.13);
+      --text: #1c1c1e;
+      --text-secondary: #636366;
+      --text-tertiary: #aeaeb2;
+      --accent-green: #30d158;
+      --accent-blue: #0a84ff;
+      --accent-red: #ff3b30;
+      --accent-orange: #ff9f0a;
+      --radius-xl: 22px;
+      --radius-lg: 18px;
+      --radius-md: 14px;
+      --radius-sm: 10px;
       --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-      --spring-soft: cubic-bezier(0.175, 0.885, 0.32, 1.1);
+      --smooth: cubic-bezier(0.4, 0, 0.2, 1);
+      --font: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --shadow-card: 0 8px 32px rgba(0,0,0,0.13), 0 2px 8px rgba(0,0,0,0.07);
+      --shadow-sm: 0 2px 12px rgba(0,0,0,0.08);
     }
 
-    *, *::before, *::after {
-      margin: 0; padding: 0;
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-      touch-action: manipulation;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
 
     html, body {
       height: 100%;
       background: var(--bg);
       color: var(--text);
-      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: var(--font);
       overflow: hidden;
       -webkit-font-smoothing: antialiased;
     }
 
     #app {
       height: 100%;
-      max-width: 430px;
-      margin: 0 auto;
-      position: relative;
+      width: 100%;
       display: flex;
       flex-direction: column;
       background: var(--bg);
+      max-width: 430px;
+      margin: 0 auto;
+      position: relative;
     }
 
-    /* HEADER */
+    /* ── HEADER ── */
     .app-header {
-      padding: max(env(safe-area-inset-top, 16px), 16px) 20px 4px;
+      padding: 16px 20px 0;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      position: relative;
       z-index: 10;
     }
 
-    .app-header-logo {
-      display: flex;
-      align-items: center;
-      gap: 9px;
+    .app-header h1 {
+      font-size: 34px;
+      font-weight: 800;
+      letter-spacing: -0.8px;
+      color: var(--text);
     }
 
-    .logo-mark {
-      width: 32px; height: 32px;
-      border-radius: 9px;
-      background: linear-gradient(135deg, #1a1a2e, #16213e);
-      border: 1px solid rgba(255,255,255,0.1);
-      display: flex; align-items: center; justify-content: center;
-      position: relative; overflow: hidden;
-    }
-    .logo-mark::before {
-      content: '';
-      position: absolute; inset: 0;
-      background: linear-gradient(135deg, rgba(10,132,255,0.3), rgba(48,209,88,0.2));
-    }
-    .logo-mark svg { position: relative; z-index: 1; }
-
-    .app-title {
-      font-size: 17px; font-weight: 600;
-      letter-spacing: -0.3px; color: var(--text);
-    }
+    .header-actions { display: flex; gap: 10px; align-items: center; }
 
     .icon-btn {
-      width: 36px; height: 36px;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
-      background: var(--surface-raised);
+      background: var(--surface);
       border: 1px solid var(--border);
       color: var(--text-secondary);
-      display: flex; align-items: center; justify-content: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       cursor: pointer;
-      transition: transform 0.15s, background 0.2s, color 0.2s;
+      transition: all 0.15s var(--smooth);
+      box-shadow: var(--shadow-sm);
     }
-    .icon-btn:active { transform: scale(0.88); background: var(--surface-hover); color: var(--text); }
 
-    /* SCROLL */
+    .icon-btn:active { transform: scale(0.88); background: var(--bg2); }
+
+    .icon-btn svg { width: 16px; height: 16px; stroke-width: 2.2; }
+
+    /* ── MAIN SCROLL ── */
     main {
       flex: 1;
-      overflow-y: auto; overflow-x: hidden;
-      padding: 0 0 110px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 0 0 100px;
+      scroll-behavior: smooth;
     }
     main::-webkit-scrollbar { display: none; }
 
-    /* HERO */
-    .hero {
-      padding: 28px 20px 24px;
-      text-align: center;
+    /* ── SEGMENT CONTROL ── */
+    .segment-wrap {
+      padding: 16px 20px 0;
     }
-    .hero-eyebrow {
-      font-size: 12px; font-weight: 500;
+
+    .segment {
+      display: flex;
+      background: var(--bg2);
+      border-radius: 12px;
+      padding: 3px;
+      gap: 2px;
+    }
+
+    .seg-btn {
+      flex: 1;
+      padding: 9px 0;
+      border: none;
+      border-radius: 10px;
+      background: transparent;
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s var(--smooth);
+      letter-spacing: -0.1px;
+    }
+
+    .seg-btn.active {
+      background: var(--surface);
+      color: var(--text);
+      box-shadow: 0 1px 6px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.07);
+    }
+
+    /* ── BALANCE HERO ── */
+    .balance-hero {
+      padding: 28px 20px 20px;
+    }
+
+    .balance-eyebrow {
+      font-size: 13px;
+      font-weight: 600;
       color: var(--text-tertiary);
-      letter-spacing: 0.04em; text-transform: uppercase;
-      margin-bottom: 8px;
+      letter-spacing: 0.02em;
+      margin-bottom: 4px;
     }
-    .hero-amount {
-      font-size: 48px; font-weight: 300;
-      letter-spacing: -2px; line-height: 1;
+
+    .balance-amount {
+      font-size: 48px;
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      color: var(--text);
+      line-height: 1.1;
       font-variant-numeric: tabular-nums;
     }
-    .hero-amount .currency {
-      font-size: 22px; font-weight: 400;
-      letter-spacing: -0.5px; opacity: 0.7;
-      vertical-align: super; margin-right: 2px;
-    }
-    .hero-amount.cash { color: var(--green); }
-    .hero-amount.cards { color: var(--blue); }
 
-    /* QUICK ACTIONS */
+    .balance-amount .currency {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      vertical-align: top;
+      margin-top: 8px;
+      display: inline-block;
+      margin-right: 3px;
+    }
+
+    /* ── QUICK ACTIONS ── */
     .quick-actions {
-      display: flex; gap: 10px;
-      padding: 0 20px 28px;
-    }
-    .qa-btn {
-      flex: 1; height: 50px;
-      border-radius: var(--r-pill); border: none;
-      font-size: 15px; font-weight: 600;
-      font-family: inherit;
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center; gap: 6px;
-      transition: all 0.2s var(--ease-out);
-      letter-spacing: -0.2px;
-    }
-    .qa-btn:active { transform: scale(0.96); }
-    .qa-btn.primary-green { background: var(--green); color: #011905; }
-    .qa-btn.primary-blue { background: var(--blue); color: #fff; }
-    .qa-btn.secondary {
-      background: var(--surface-raised); color: var(--text);
-      border: 1px solid var(--border);
+      display: flex;
+      gap: 12px;
+      padding: 0 20px 24px;
     }
 
-    /* SECTION HEADER */
+    .qa-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 7px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.15s var(--spring);
+    }
+
+    .qa-btn:active { transform: scale(0.9); }
+
+    .qa-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .qa-icon.green { background: var(--accent-green); }
+    .qa-icon.blue { background: var(--accent-blue); }
+    .qa-icon.red { background: rgba(255,59,48,0.12); }
+
+    .qa-icon svg { width: 22px; height: 22px; stroke: white; stroke-width: 2.5; }
+    .qa-icon.red svg { stroke: var(--accent-red); }
+
+    .qa-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      letter-spacing: -0.1px;
+    }
+
+    /* ── SECTION HEADER ── */
     .section-header {
-      display: flex; align-items: baseline; justify-content: space-between;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       padding: 0 20px 12px;
     }
-    .section-label { font-size: 20px; font-weight: 600; letter-spacing: -0.5px; }
-    .section-count { font-size: 13px; color: var(--text-tertiary); font-weight: 500; }
 
-    /* TX LIST */
-    .date-group-label {
-      font-size: 12px; font-weight: 600;
-      color: var(--text-tertiary);
-      padding: 16px 20px 8px;
-      text-transform: uppercase; letter-spacing: 0.05em;
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.4px;
     }
-    .tx-group {
-      background: var(--surface-raised);
-      border-radius: var(--r-md);
-      overflow: hidden;
-      margin: 0 20px 2px;
-      border: 1px solid var(--border-subtle);
+
+    .section-link {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--accent-blue);
+      background: none;
+      border: none;
+      cursor: pointer;
     }
-    .tx-item {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 13px 16px;
-      cursor: pointer; transition: background 0.1s;
+
+    /* ── STACKED CARDS ── */
+    .cards-stack {
+      padding: 0 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+
+    .card-visual {
+      border-radius: var(--radius-xl);
+      padding: 22px 24px;
+      cursor: pointer;
       position: relative;
+      overflow: hidden;
+      aspect-ratio: 1.586;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: var(--shadow-card);
+      transition: transform 0.2s var(--smooth), box-shadow 0.2s;
     }
-    .tx-item:not(:last-child)::after {
+
+    .card-visual:active {
+      transform: scale(0.97) translateY(2px);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+
+    /* Card noise texture overlay */
+    .card-visual::before {
       content: '';
-      position: absolute; bottom: 0; left: 62px; right: 0;
-      height: 1px; background: var(--border-subtle);
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1;
     }
+
+    .card-shine {
+      position: absolute;
+      top: -80%;
+      left: -40%;
+      width: 180%;
+      height: 180%;
+      background: linear-gradient(135deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 60%);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .card-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      position: relative;
+      z-index: 3;
+    }
+
+    .card-bank-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.85);
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .card-network {
+      display: flex;
+      align-items: center;
+      gap: -4px;
+    }
+
+    .card-network-circle {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      opacity: 0.85;
+    }
+
+    .card-network-circle:first-child { background: #eb001b; margin-right: -8px; }
+    .card-network-circle:last-child { background: #f79e1b; }
+
+    .card-chip-wrap {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .card-chip {
+      width: 36px;
+      height: 27px;
+      background: linear-gradient(135deg, #fcd34d, #d97706 60%, #fcd34d);
+      border-radius: 5px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+      position: relative;
+      z-index: 3;
+    }
+
+    .card-chip::after {
+      content: '';
+      position: absolute;
+      inset: 5px;
+      border: 1.5px solid rgba(0,0,0,0.15);
+      border-radius: 3px;
+    }
+
+    .card-nfc {
+      width: 18px;
+      height: 18px;
+      position: relative;
+      z-index: 3;
+    }
+
+    .card-nfc::before, .card-nfc::after {
+      content: '';
+      position: absolute;
+      border: 2px solid rgba(255,255,255,0.6);
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .card-nfc::before { width: 12px; height: 12px; }
+    .card-nfc::after { width: 18px; height: 18px; }
+
+    .card-bottom { position: relative; z-index: 3; }
+
+    .card-number {
+      font-size: 13px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.6);
+      letter-spacing: 0.12em;
+      margin-bottom: 6px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .card-name {
+      font-size: 19px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.3px;
+    }
+
+    .card-balance-wrap {
+      text-align: right;
+    }
+
+    .card-balance-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.55);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+    }
+
+    .card-balance {
+      font-size: 20px;
+      font-weight: 800;
+      color: #fff;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.4px;
+    }
+
+    /* ── ADD CARD CTA ── */
+    .add-card-cta {
+      margin: 0 20px 24px;
+      padding: 18px 20px;
+      background: var(--surface);
+      border: 2px dashed var(--border-strong);
+      border-radius: var(--radius-xl);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .add-card-cta:active { background: var(--bg2); transform: scale(0.98); }
+
+    .add-card-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: rgba(10,132,255,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .add-card-icon svg { width: 20px; height: 20px; stroke: var(--accent-blue); stroke-width: 2.5; }
+
+    .add-card-text .add-card-title { font-size: 16px; font-weight: 700; color: var(--accent-blue); }
+    .add-card-text .add-card-sub { font-size: 13px; color: var(--text-tertiary); margin-top: 1px; }
+
+    /* ── TRANSACTION LIST ── */
+    .tx-section { padding: 0 20px; }
+
+    .tx-group-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      padding: 16px 0 8px;
+    }
+
+    .tx-list { display: flex; flex-direction: column; gap: 2px; }
+
+    .tx-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 13px 16px;
+      background: var(--surface);
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+
+    .tx-item:first-child { border-radius: var(--radius-md) var(--radius-md) 0 0; }
+    .tx-item:last-child { border-radius: 0 0 var(--radius-md) var(--radius-md); }
+    .tx-item:only-child { border-radius: var(--radius-md); }
+    .tx-item:not(:last-child) { border-bottom: 1px solid var(--border); }
     .tx-item:active { background: var(--surface-hover); }
 
     .tx-left { display: flex; align-items: center; gap: 13px; }
+
     .tx-icon {
-      width: 38px; height: 38px;
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 17px; flex-shrink: 0;
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
     }
-    .tx-icon.in { background: var(--green-dim); }
-    .tx-icon.out { background: var(--red-dim); }
+
+    .tx-icon.in { background: rgba(48,209,88,0.12); }
+    .tx-icon.out { background: rgba(0,0,0,0.05); }
+    .tx-icon svg { width: 18px; height: 18px; stroke-width: 2.5; }
+    .tx-icon.in svg { stroke: var(--accent-green); }
+    .tx-icon.out svg { stroke: var(--text-secondary); }
 
     .tx-info { display: flex; flex-direction: column; gap: 2px; }
-    .tx-title { font-size: 15px; font-weight: 500; letter-spacing: -0.1px; }
-    .tx-date { font-size: 12px; color: var(--text-tertiary); }
+    .tx-title { font-size: 15px; font-weight: 600; color: var(--text); letter-spacing: -0.1px; }
+    .tx-time { font-size: 12px; color: var(--text-tertiary); font-weight: 500; }
 
-    .tx-amount {
-      font-size: 15px; font-weight: 600;
-      font-variant-numeric: tabular-nums; letter-spacing: -0.3px;
-    }
-    .tx-amount.in { color: var(--green); }
+    .tx-right { text-align: right; }
+    .tx-amount { font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -0.2px; }
+    .tx-amount.in { color: var(--accent-green); }
     .tx-amount.out { color: var(--text); }
 
-    /* CARDS */
-    .cards-stack {
-      display: flex; flex-direction: column;
-      gap: 16px; padding: 0 20px;
-    }
-    .wallet-card {
-      border-radius: var(--r-card);
-      padding: 22px 24px 20px;
-      cursor: pointer; position: relative; overflow: hidden;
-      aspect-ratio: 1.586;
-      display: flex; flex-direction: column; justify-content: space-between;
-      transition: transform 0.3s var(--spring-soft), box-shadow 0.3s var(--ease-out);
-      border: 1px solid rgba(255,255,255,0.09);
-    }
-    .wallet-card:active { transform: scale(0.975) translateY(2px); }
-
-    .card-shimmer {
-      position: absolute; inset: 0;
-      background: linear-gradient(125deg, rgba(255,255,255,0) 30%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0) 70%);
-      pointer-events: none; z-index: 1;
-    }
-    .card-noise {
-      position: absolute; inset: 0;
-      opacity: 0.025; pointer-events: none; z-index: 1;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-      background-size: 100px 100px;
-    }
-    .card-top-row {
-      display: flex; justify-content: space-between; align-items: flex-start;
-      position: relative; z-index: 2;
-    }
-    .emv-chip {
-      width: 34px; height: 26px; border-radius: 5px;
-      background: linear-gradient(135deg, #e8c97a 0%, #c9a227 40%, #e8c97a 70%, #b8911e 100%);
-      position: relative;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
-    }
-    .emv-chip::before {
-      content: ''; position: absolute; inset: 5px;
-      border-radius: 3px; border: 1px solid rgba(0,0,0,0.18);
-    }
-    .emv-chip::after {
-      content: ''; position: absolute;
-      left: 50%; top: 0; bottom: 0; width: 1px;
-      background: rgba(0,0,0,0.15); transform: translateX(-50%);
-    }
-    .nfc-icon {
-      display: flex; align-items: center; justify-content: center;
-      width: 22px; height: 22px; opacity: 0.55;
-    }
-    .nfc-icon svg { width: 20px; height: 20px; }
-
-    .card-bottom { position: relative; z-index: 2; }
-    .card-type-badge {
-      font-size: 10px; font-weight: 700;
-      letter-spacing: 0.12em; text-transform: uppercase;
-      color: rgba(255,255,255,0.5); margin-bottom: 5px;
-    }
-    .card-name-label {
-      font-size: 16px; font-weight: 600;
-      color: rgba(255,255,255,0.92);
-      letter-spacing: -0.2px; margin-bottom: 2px;
-    }
-    .card-balance-display {
-      font-size: 24px; font-weight: 300;
-      color: white; font-variant-numeric: tabular-nums;
-      letter-spacing: -0.8px;
-    }
-
-    /* EMPTY */
+    /* ── EMPTY STATE ── */
     .empty-state {
-      display: flex; flex-direction: column; align-items: center;
-      padding: 60px 24px 40px; text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 60px 20px 40px;
+      text-align: center;
     }
-    .empty-icon-wrap {
-      width: 64px; height: 64px; border-radius: 18px;
-      background: var(--surface-raised); border: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 28px; margin-bottom: 16px;
-    }
-    .empty-title { font-size: 17px; font-weight: 600; margin-bottom: 5px; }
-    .empty-body { font-size: 14px; color: var(--text-secondary); line-height: 1.5; }
 
-    /* BOTTOM NAV */
+    .empty-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 24px;
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .empty-icon svg { width: 32px; height: 32px; stroke: var(--text-tertiary); stroke-width: 1.8; }
+    .empty-title { font-size: 18px; font-weight: 700; color: var(--text-secondary); margin-bottom: 4px; }
+    .empty-desc { font-size: 14px; color: var(--text-tertiary); }
+
+    /* ── BOTTOM NAV ── */
     .bottom-nav {
-      position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
-      width: 100%; max-width: 430px;
-      background: rgba(10,10,15,0.82);
-      backdrop-filter: blur(40px) saturate(200%);
-      -webkit-backdrop-filter: blur(40px) saturate(200%);
-      border-top: 1px solid rgba(255,255,255,0.05);
-      display: flex; justify-content: space-around;
-      padding: 12px 0 calc(14px + env(safe-area-inset-bottom));
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 430px;
+      background: rgba(242,242,247,0.85);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
       z-index: 50;
     }
-    .nav-btn {
-      flex: 1; display: flex; flex-direction: column;
-      align-items: center; gap: 4px;
-      background: none; border: none;
-      color: var(--text-tertiary);
-      font-size: 10px; font-weight: 600;
-      font-family: inherit; cursor: pointer;
-      transition: color 0.2s;
-      letter-spacing: 0.03em; text-transform: uppercase;
-    }
-    .nav-btn.active { color: var(--text); }
-    .nav-icon-wrap {
-      width: 30px; height: 30px;
-      display: flex; align-items: center; justify-content: center;
-      border-radius: 10px;
-      transition: transform 0.25s var(--spring);
-    }
-    .nav-btn.active .nav-icon-wrap { transform: scale(1.08); }
 
-    /* FAB */
+    .nav-btn {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      background: none;
+      border: none;
+      color: var(--text-tertiary);
+      font-family: var(--font);
+      font-size: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: color 0.2s;
+      padding: 4px;
+      letter-spacing: 0.01em;
+    }
+
+    .nav-btn svg { width: 24px; height: 24px; stroke-width: 2; transition: transform 0.2s var(--spring); }
+    .nav-btn.active { color: var(--accent-blue); }
+    .nav-btn.active svg { transform: scale(1.1); stroke-width: 2.5; }
+
+    /* ── FAB ── */
     .fab {
       position: fixed;
-      bottom: calc(90px + env(safe-area-inset-bottom));
-      right: 20px;
-      width: 52px; height: 52px; border-radius: 50%;
-      background: var(--text); color: var(--bg);
-      border: none; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 2px 20px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.1);
+      bottom: calc(76px + env(safe-area-inset-bottom));
+      right: calc(50% - 200px + 16px);
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      background: var(--accent-blue);
+      color: white;
+      border: none;
+      font-size: 24px;
+      font-weight: 300;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 20px rgba(10,132,255,0.4);
       z-index: 40;
-      transition: all 0.35s var(--spring-soft);
+      transition: all 0.3s var(--spring);
     }
-    .fab:active { transform: scale(0.88); }
-    .fab.hidden { transform: scale(0) translateY(16px); opacity: 0; pointer-events: none; }
 
-    /* BOTTOM SHEET */
+    .fab:active { transform: scale(0.88); }
+    .fab.hidden { transform: scale(0); opacity: 0; pointer-events: none; }
+    .fab svg { width: 22px; height: 22px; stroke: white; stroke-width: 2.5; }
+
+    @media (max-width: 430px) {
+      .fab { right: 16px; }
+    }
+
+    /* ── SHEET ── */
     .sheet-overlay {
-      position: fixed; inset: 0; z-index: 100;
-      background: rgba(0,0,0,0.6);
-      backdrop-filter: blur(8px);
-      opacity: 0; pointer-events: none;
-      transition: opacity 0.3s var(--ease-out);
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(0,0,0,0.4);
+      backdrop-filter: blur(4px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s;
     }
     .sheet-overlay.open { opacity: 1; pointer-events: all; }
+
     .sheet {
-      position: absolute; bottom: 0; left: 0; right: 0;
-      max-width: 430px; margin: 0 auto;
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%) translateY(100%);
+      width: 100%;
+      max-width: 430px;
       background: var(--surface);
       border-radius: 24px 24px 0 0;
-      padding: 10px 24px calc(32px + env(safe-area-inset-bottom));
-      transform: translateY(100%);
-      transition: transform 0.42s cubic-bezier(0.32, 0.72, 0, 1);
-      max-height: 90vh; overflow-y: auto;
-      border: 1px solid var(--border); border-bottom: none;
+      padding: 8px 20px calc(32px + env(safe-area-inset-bottom));
+      transition: transform 0.38s cubic-bezier(0.32, 0.72, 0, 1);
+      max-height: 88vh;
+      overflow-y: auto;
     }
-    .sheet-overlay.open .sheet { transform: translateY(0); }
+
+    .sheet-overlay.open .sheet {
+      transform: translateX(-50%) translateY(0);
+    }
+
     .sheet-handle {
-      width: 40px; height: 4px;
-      background: rgba(255,255,255,0.14);
-      border-radius: 2px; margin: 0 auto 28px;
-    }
-    .sheet-title { font-size: 20px; font-weight: 700; margin-bottom: 24px; letter-spacing: -0.5px; }
-
-    /* DETAIL PANEL */
-    .detail-view {
-      position: fixed; top: 0; bottom: 0;
-      left: 50%; width: 100%; max-width: 430px;
-      background: var(--bg);
-      transform: translateX(-50%) translateX(100%);
-      transition: transform 0.42s cubic-bezier(0.32, 0.72, 0, 1);
-      display: flex; flex-direction: column; z-index: 80;
-    }
-    .detail-view.open { transform: translateX(-50%) translateX(0); }
-    .detail-header {
-      padding: max(env(safe-area-inset-top, 16px), 16px) 16px 12px;
-      display: flex; align-items: center; gap: 10px;
-    }
-    .detail-header h2 { font-size: 17px; font-weight: 600; flex: 1; letter-spacing: -0.3px; }
-    .detail-body { flex: 1; overflow-y: auto; padding: 0 20px 40px; }
-    .detail-body::-webkit-scrollbar { display: none; }
-    .detail-card-hero {
-      border-radius: var(--r-card);
-      padding: 22px 24px 20px; margin-bottom: 28px;
-      position: relative; overflow: hidden;
-      aspect-ratio: 1.586;
-      display: flex; flex-direction: column; justify-content: space-between;
-      border: 1px solid rgba(255,255,255,0.09);
-    }
-    .detail-balance-label {
-      font-size: 11px; color: rgba(255,255,255,0.5);
-      font-weight: 600; text-transform: uppercase;
-      letter-spacing: 0.08em; margin-bottom: 4px;
-      position: relative; z-index: 2;
-    }
-    .detail-balance-value {
-      font-size: 34px; font-weight: 300;
-      color: white; font-variant-numeric: tabular-nums;
-      letter-spacing: -1.2px; position: relative; z-index: 2;
+      width: 40px;
+      height: 5px;
+      background: var(--bg2);
+      border-radius: 3px;
+      margin: 0 auto 20px;
     }
 
-    /* FORM */
-    .field { margin-bottom: 18px; }
+    .sheet-title {
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 22px;
+      letter-spacing: -0.4px;
+    }
+
+    /* ── FIELDS ── */
+    .field { margin-bottom: 16px; }
+
     .field-label {
-      display: block; font-size: 12px; font-weight: 600;
-      color: var(--text-secondary); margin-bottom: 8px;
-      text-transform: uppercase; letter-spacing: 0.05em;
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-tertiary);
+      margin-bottom: 7px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
     }
+
     .field-input, .field-select {
-      width: 100%; padding: 15px 16px;
+      width: 100%;
+      padding: 15px 16px;
       background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: var(--r-md);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
       color: var(--text);
-      font-size: 16px; font-weight: 400;
+      font-size: 16px;
+      font-weight: 500;
       outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s;
-      font-family: inherit; letter-spacing: -0.2px;
+      transition: all 0.2s;
+      font-family: var(--font);
       -webkit-appearance: none;
     }
+
     .field-input:focus, .field-select:focus {
-      border-color: rgba(10,132,255,0.5);
-      box-shadow: 0 0 0 3px rgba(10,132,255,0.1);
+      border-color: var(--accent-blue);
+      background: var(--surface);
+      box-shadow: 0 0 0 4px rgba(10,132,255,0.1);
     }
-    .field-select {
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(245,245,247,0.4)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-      background-repeat: no-repeat; background-position: right 14px center;
-      padding-right: 40px;
-    }
-    .field-select option { background: #111; }
 
-    /* BUTTONS */
+    .field-input::placeholder { color: var(--text-tertiary); }
+
+    /* ── BUTTONS ── */
     .btn {
-      width: 100%; padding: 16px; border: none;
-      border-radius: var(--r-md);
-      font-size: 16px; font-weight: 600; font-family: inherit;
-      cursor: pointer; transition: all 0.15s; letter-spacing: -0.2px;
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s var(--smooth);
+      font-family: var(--font);
+      letter-spacing: -0.1px;
     }
+
     .btn:active { transform: scale(0.98); }
-    .btn-primary-blue { background: var(--blue); color: white; box-shadow: 0 4px 24px rgba(10,132,255,0.25); margin-top: 8px; }
-    .btn-primary-green { background: var(--green); color: #011905; margin-top: 4px; }
-    .btn-danger { background: var(--red-dim); color: var(--red); border: 1px solid rgba(255,69,58,0.18); margin-top: 8px; }
-    .btn-secondary { background: var(--surface-raised); color: var(--text); border: 1px solid var(--border); margin-top: 8px; }
 
-    .split-btns { display: flex; gap: 10px; margin-top: 10px; }
-    .split-btns .btn { flex: 1; margin-top: 0; }
+    .btn-primary {
+      background: var(--accent-blue);
+      color: white;
+      box-shadow: 0 4px 16px rgba(10,132,255,0.3);
+      margin-top: 6px;
+    }
 
-    /* TOAST */
+    .btn-green {
+      background: var(--accent-green);
+      color: white;
+      box-shadow: 0 4px 16px rgba(48,209,88,0.3);
+      margin-top: 6px;
+    }
+
+    .btn-danger {
+      background: rgba(255,59,48,0.1);
+      color: var(--accent-red);
+      margin-top: 6px;
+    }
+
+    .btn-secondary {
+      background: var(--bg);
+      color: var(--text);
+      border: 1.5px solid var(--border);
+      margin-top: 6px;
+    }
+
+    .two-btns {
+      display: flex;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .two-btns .btn { margin-top: 0; }
+
+    /* ── DETAIL VIEW ── */
+    .detail-view {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      transform: translateX(100%);
+      transition: transform 0.38s cubic-bezier(0.32, 0.72, 0, 1);
+      display: flex;
+      flex-direction: column;
+      z-index: 80;
+      max-width: 430px;
+      left: 50%;
+      translate: -50% 0;
+    }
+
+    .detail-view.open { transform: translateX(0); translate: -50% 0; }
+
+    .detail-header {
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .detail-header h2 {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+
+    .detail-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 20px 40px;
+    }
+
+    .detail-body::-webkit-scrollbar { display: none; }
+
+    .detail-card {
+      border-radius: var(--radius-xl);
+      padding: 24px;
+      margin-bottom: 22px;
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 1.586;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: var(--shadow-card);
+    }
+
+    .detail-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .detail-balance {
+      font-size: 32px;
+      font-weight: 800;
+      color: white;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.6px;
+      position: relative;
+      z-index: 3;
+    }
+
+    /* ── TOAST ── */
     .toast {
       position: fixed;
-      bottom: calc(110px + env(safe-area-inset-bottom));
-      left: 50%; transform: translateX(-50%) translateY(20px);
-      background: rgba(22,22,29,0.92);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      color: var(--text);
-      padding: 12px 22px; border-radius: var(--r-pill);
-      font-size: 14px; font-weight: 500;
-      opacity: 0; transition: all 0.35s var(--spring);
-      z-index: 300; pointer-events: none;
-      border: 1px solid var(--border);
-      white-space: nowrap; letter-spacing: -0.1px;
+      bottom: calc(90px + env(safe-area-inset-bottom));
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: rgba(28,28,30,0.92);
+      color: white;
+      padding: 11px 22px;
+      border-radius: 100px;
+      font-size: 14px;
+      font-weight: 600;
+      opacity: 0;
+      transition: all 0.35s var(--spring);
+      z-index: 300;
+      pointer-events: none;
+      white-space: nowrap;
+      font-family: var(--font);
+      letter-spacing: -0.1px;
     }
+
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
     * { scrollbar-width: none; }
@@ -486,52 +822,38 @@
 <body>
   <div id="app">
     <div class="app-header">
-      <div class="app-header-logo">
-        <div class="logo-mark">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path d="M3 8h10M8 3v10" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-          </svg>
-        </div>
-        <span class="app-title">Dompet</span>
+      <h1>Wallet</h1>
+      <div class="header-actions">
+        <button class="icon-btn" onclick="app.openAdd()" aria-label="Add">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-linecap="round"/></svg>
+        </button>
+        <button class="icon-btn" onclick="app.showMenu()" aria-label="Menu">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="5" r="1.2" fill="currentColor"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/><circle cx="12" cy="19" r="1.2" fill="currentColor"/></svg>
+        </button>
       </div>
-      <button class="icon-btn" onclick="app.showMenu()" aria-label="Menu">
-        <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
-          <path d="M0 1h16M0 6h16M0 11h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
-      </button>
+    </div>
+
+    <div class="segment-wrap">
+      <div class="segment">
+        <button class="seg-btn active" id="seg-cash" onclick="app.switchTab('cash')">Cash</button>
+        <button class="seg-btn" id="seg-cards" onclick="app.switchTab('cards')">Cards</button>
+      </div>
     </div>
 
     <main id="main"></main>
 
     <div class="bottom-nav">
-      <button class="nav-btn active" onclick="app.switchTab('cash')" id="nav-cash">
-        <div class="nav-icon-wrap">
-          <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-            <rect x="2" y="5" width="18" height="13" rx="3" stroke="currentColor" stroke-width="1.5"/>
-            <circle cx="11" cy="11.5" r="2.5" stroke="currentColor" stroke-width="1.5"/>
-            <path d="M2 9h2M18 9h2M2 14h2M18 14h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-          </svg>
-        </div>
-        <span>Cash</span>
+      <button class="nav-btn active" id="nav-cash" onclick="app.switchTab('cash')">
+        <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="20" height="14" rx="3" stroke="currentColor"/><path d="M2 10h20M6 14h2M10 14h4" stroke="currentColor" stroke-linecap="round"/></svg>
+        Cash
       </button>
-      <button class="nav-btn" onclick="app.switchTab('cards')" id="nav-cards">
-        <div class="nav-icon-wrap">
-          <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-            <rect x="2" y="5" width="18" height="13" rx="3" stroke="currentColor" stroke-width="1.5"/>
-            <path d="M2 9h18" stroke="currentColor" stroke-width="1.5"/>
-            <rect x="4.5" y="12" width="4" height="2.5" rx="1" fill="currentColor" opacity="0.5"/>
-          </svg>
-        </div>
-        <span>Cards</span>
+      <button class="nav-btn" id="nav-cards" onclick="app.switchTab('cards')">
+        <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="3" stroke="currentColor"/><path d="M3 9h18" stroke="currentColor"/><circle cx="7" cy="14" r="1.5" fill="currentColor" opacity="0.5"/></svg>
+        Cards
       </button>
     </div>
 
-    <button class="fab" id="fab" onclick="app.openAdd()">
-      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-        <path d="M9 1v16M1 9h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-      </svg>
-    </button>
-
+    <!-- Add Sheet -->
     <div class="sheet-overlay" id="addSheet" onclick="if(event.target===this)app.closeAdd()">
       <div class="sheet">
         <div class="sheet-handle"></div>
@@ -540,47 +862,29 @@
       </div>
     </div>
 
+    <!-- Detail View -->
     <div class="detail-view" id="detailView">
       <div class="detail-header">
         <button class="icon-btn" onclick="app.closeDetail()">
-          <svg width="10" height="16" viewBox="0 0 10 16" fill="none">
-            <path d="M8 2L2 8l6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+          <svg viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
         <h2 id="detailTitle">Card</h2>
-        <button class="icon-btn" onclick="app.deleteCard()" style="color:var(--red)" aria-label="Delete">
-          <svg width="14" height="16" viewBox="0 0 14 16" fill="none">
-            <path d="M1 4h12M5 4V2.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5V4M2 4l.8 9.5a.5.5 0 0 0 .5.5h7.4a.5.5 0 0 0 .5-.5L12 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-            <path d="M5.5 7v4M8.5 7v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-          </svg>
+        <button class="icon-btn" onclick="app.deleteCard()" style="color:var(--accent-red)" aria-label="Delete">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
       </div>
       <div class="detail-body" id="detailBody"></div>
     </div>
 
+    <!-- Menu Sheet -->
     <div class="sheet-overlay" id="menuSheet" onclick="if(event.target===this)app.closeMenu()">
       <div class="sheet">
         <div class="sheet-handle"></div>
         <div class="sheet-title">Settings</div>
-        <button class="btn btn-secondary" onclick="app.exportData()">
-          <span style="display:flex;align-items:center;justify-content:center;gap:8px">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v9M4 8l4 4 4-4M2 13h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Export Backup
-          </span>
-        </button>
+        <button class="btn btn-secondary" onclick="app.exportData()">Export Backup</button>
         <input type="file" id="importInput" style="display:none" accept=".json" onchange="app.importData(this)">
-        <button class="btn btn-secondary" onclick="document.getElementById('importInput').click()">
-          <span style="display:flex;align-items:center;justify-content:center;gap:8px">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 14V5M4 8L8 4l4 4M2 3h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Import Backup
-          </span>
-        </button>
-        <button class="btn btn-danger" onclick="app.clearAll()">
-          <span style="display:flex;align-items:center;justify-content:center;gap:8px">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M8 5v4M8 11v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-            Clear All Data
-          </span>
-        </button>
+        <button class="btn btn-secondary" onclick="document.getElementById('importInput').click()">Import Backup</button>
+        <button class="btn btn-danger" onclick="app.clearAll()">Clear All Data</button>
       </div>
     </div>
 
@@ -594,19 +898,17 @@
       currentCardId: null,
 
       cardPalettes: [
-        { bg: 'linear-gradient(140deg,#0f1923 0%,#1a2e4a 60%,#0d2038 100%)' },
-        { bg: 'linear-gradient(140deg,#1a0a2e 0%,#2d1155 60%,#130824 100%)' },
-        { bg: 'linear-gradient(140deg,#0a1f14 0%,#0e3320 60%,#061510 100%)' },
-        { bg: 'linear-gradient(140deg,#1f0f08 0%,#3d1a0a 60%,#1a0d05 100%)' },
-        { bg: 'linear-gradient(140deg,#111318 0%,#1c2030 60%,#0d0f18 100%)' },
-        { bg: 'linear-gradient(140deg,#1a0e14 0%,#331528 60%,#120a10 100%)' },
+        { bg: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)' },
+        { bg: 'linear-gradient(135deg, #3d0c02 0%, #6b21a8 60%, #581c87 100%)' },
+        { bg: 'linear-gradient(135deg, #022c22 0%, #065f46 55%, #064e3b 100%)' },
+        { bg: 'linear-gradient(135deg, #450a0a 0%, #991b1b 60%, #7f1d1d 100%)' },
+        { bg: 'linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #334155 100%)' },
+        { bg: 'linear-gradient(135deg, #1e1b4b 0%, #3730a3 60%, #312e81 100%)' },
       ],
 
       init() {
-        try {
-          const raw = localStorage.getItem('dompet_data');
-          if (raw) this.data = JSON.parse(raw);
-        } catch(e) {}
+        const raw = localStorage.getItem('dompet_data');
+        if (raw) this.data = JSON.parse(raw);
         this.render();
         if ('serviceWorker' in navigator) {
           navigator.serviceWorker.register('./sw.js').catch(() => {});
@@ -618,7 +920,7 @@
       },
 
       idr(n) {
-        return 'Rp\u202f' + Math.round(n).toLocaleString('id-ID');
+        return 'Rp\u00a0' + Math.round(n).toLocaleString('id-ID');
       },
 
       formatDate(ts) {
@@ -627,111 +929,130 @@
         const yest = new Date(now); yest.setDate(yest.getDate() - 1);
         if (d.toDateString() === now.toDateString()) return 'Today';
         if (d.toDateString() === yest.toDateString()) return 'Yesterday';
-        return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+        return d.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'short' });
       },
 
       switchTab(t) {
         this.tab = t;
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
         document.getElementById('nav-' + t).classList.add('active');
+        document.getElementById('seg-' + t).classList.add('active');
         this.render();
       },
 
       render() {
         const main = document.getElementById('main');
-        const fab = document.getElementById('fab');
-        fab.classList.remove('hidden');
 
         if (this.tab === 'cash') {
+          const bal = this.data.cash.balance;
+          const balStr = Math.round(bal).toLocaleString('id-ID');
           main.innerHTML = `
-            <div class="hero">
-              <div class="hero-eyebrow">Cash on Hand</div>
-              <div class="hero-amount cash">
-                <span class="currency">Rp</span>${Math.round(this.data.cash.balance).toLocaleString('id-ID')}
+            <div class="balance-hero">
+              <div class="balance-eyebrow">Cash on Hand</div>
+              <div class="balance-amount">
+                <span class="currency">Rp</span>${balStr}
               </div>
             </div>
             <div class="quick-actions">
-              <button class="qa-btn primary-green" onclick="app.openAdd()">
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-                Add
+              <button class="qa-btn" onclick="app.openAdd()">
+                <div class="qa-icon green">
+                  <svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>
+                </div>
+                <span class="qa-label">Income</span>
               </button>
-              <button class="qa-btn secondary" onclick="app.openSpend()">
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 7h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-                Spend
+              <button class="qa-btn" onclick="app.cashPromptSpend()">
+                <div class="qa-icon" style="background:rgba(0,0,0,0.07)">
+                  <svg viewBox="0 0 24 24" fill="none" style="stroke:var(--text-secondary)"><path d="M5 12h14" stroke-linecap="round"/></svg>
+                </div>
+                <span class="qa-label">Spend</span>
               </button>
             </div>
-            ${this.renderTxList(this.data.cash.history, true)}
+            <div class="section-header">
+              <div class="section-title">Transactions</div>
+            </div>
+            <div class="tx-section">
+              ${this.renderTxList(this.data.cash.history, true)}
+            </div>
           `;
         } else {
           const total = this.data.cards.reduce((s, c) => s + (c.balance || 0), 0);
-          const count = this.data.cards.length;
+          const totalStr = Math.round(total).toLocaleString('id-ID');
           main.innerHTML = `
-            <div class="hero">
-              <div class="hero-eyebrow">Total Card Balance</div>
-              <div class="hero-amount cards">
-                <span class="currency">Rp</span>${Math.round(total).toLocaleString('id-ID')}
+            <div class="balance-hero">
+              <div class="balance-eyebrow">Total Card Balance</div>
+              <div class="balance-amount">
+                <span class="currency">Rp</span>${totalStr}
               </div>
             </div>
-            <div class="section-header">
-              <span class="section-label">My Cards</span>
-              ${count ? `<span class="section-count">${count} card${count > 1 ? 's' : ''}</span>` : ''}
+            <div class="section-header" style="padding-bottom:14px">
+              <div class="section-title">My Cards</div>
             </div>
-            ${count === 0 ? `
-              <div class="empty-state">
-                <div class="empty-icon-wrap">
-                  <svg width="28" height="22" viewBox="0 0 28 22" fill="none">
-                    <rect x="1" y="1" width="26" height="20" rx="4" stroke="rgba(245,245,247,0.3)" stroke-width="1.5"/>
-                    <path d="M1 8h26" stroke="rgba(245,245,247,0.3)" stroke-width="1.5"/>
-                    <rect x="4.5" y="13" width="6" height="3" rx="1.5" fill="rgba(245,245,247,0.2)"/>
-                  </svg>
+            ${this.data.cards.length === 0 ? `
+              <div class="empty-state" style="padding-top:20px">
+                <div class="empty-icon">
+                  <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="5" width="20" height="14" rx="3" stroke="currentColor"/><path d="M2 9h20" stroke="currentColor"/></svg>
                 </div>
                 <div class="empty-title">No cards yet</div>
-                <div class="empty-body">Tap + to add your first card and start tracking balances.</div>
+                <div class="empty-desc">Add your first card below</div>
               </div>
             ` : `
               <div class="cards-stack">
                 ${this.data.cards.map((card, i) => {
                   const pal = this.cardPalettes[i % this.cardPalettes.length];
+                  const last4 = '•••• ' + (card.last4 || '0000');
                   return `
-                    <div class="wallet-card" onclick="app.openCard('${card.id}')" style="background:${pal.bg};box-shadow:0 16px 40px rgba(0,0,0,0.5),0 0 0 1px rgba(255,255,255,0.07)">
-                      <div class="card-shimmer"></div>
-                      <div class="card-noise"></div>
-                      <div class="card-top-row">
-                        <div class="emv-chip"></div>
-                        <div class="nfc-icon">
-                          <svg viewBox="0 0 20 20" fill="none">
-                            <path d="M10 10 C10 7.5,12 6,14 7.5" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
-                            <path d="M10 10 C10 5.5,15 3.5,17 7" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
-                            <circle cx="10" cy="10" r="1.2" fill="white"/>
-                          </svg>
+                    <div class="card-visual" onclick="app.openCard('${card.id}')" style="background:${pal.bg}">
+                      <div class="card-shine"></div>
+                      <div class="card-row">
+                        <div class="card-bank-name">${card.name}</div>
+                        <div class="card-network">
+                          <div class="card-network-circle"></div>
+                          <div class="card-network-circle"></div>
                         </div>
                       </div>
-                      <div class="card-bottom">
-                        <div class="card-type-badge">${card.type}</div>
-                        <div class="card-name-label">${card.name}</div>
-                        <div class="card-balance-display">${this.idr(card.balance || 0)}</div>
+                      <div class="card-row" style="align-items:center">
+                        <div class="card-chip-wrap">
+                          <div class="card-chip"></div>
+                          <div class="card-nfc"></div>
+                        </div>
+                      </div>
+                      <div class="card-row" style="align-items:flex-end">
+                        <div class="card-bottom">
+                          <div class="card-number">${last4}</div>
+                          <div class="card-name">${card.type}</div>
+                        </div>
+                        <div class="card-balance-wrap">
+                          <div class="card-balance-label">Balance</div>
+                          <div class="card-balance">${this.idr(card.balance || 0)}</div>
+                        </div>
                       </div>
                     </div>
                   `;
                 }).join('')}
               </div>
             `}
+            <div class="add-card-cta" onclick="app.openAdd()">
+              <div class="add-card-icon">
+                <svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>
+              </div>
+              <div class="add-card-text">
+                <div class="add-card-title">Add New Card</div>
+                <div class="add-card-sub">Debit, credit, or e-wallet</div>
+              </div>
+            </div>
           `;
-          // FAB always visible on cards tab so user can add their first card
         }
       },
 
       renderTxList(history, allowDelete) {
         if (!history.length) return `
           <div class="empty-state">
-            <div class="empty-icon-wrap">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <rect x="2" y="3" width="20" height="18" rx="3" stroke="rgba(245,245,247,0.3)" stroke-width="1.5"/>
-                <path d="M7 8h10M7 12h7M7 16h4" stroke="rgba(245,245,247,0.3)" stroke-width="1.5" stroke-linecap="round"/>
-              </svg>
+            <div class="empty-icon">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </div>
             <div class="empty-title">No transactions</div>
-            <div class="empty-body">Your history will appear here.</div>
+            <div class="empty-desc">Your history will appear here</div>
           </div>
         `;
 
@@ -742,79 +1063,116 @@
           groups[label].push(tx);
         });
 
-        return '<div style="padding-bottom:8px">' + Object.entries(groups).map(([label, txs]) => `
-          <div class="date-group-label">${label}</div>
-          <div class="tx-group">
-            ${txs.map(tx => {
-              const isIn = tx.amount > 0;
-              const idx = history.length - 1 - history.slice().reverse().indexOf(tx);
-              return `
-                <div class="tx-item" ${allowDelete ? `onclick="if(confirm('Delete this entry?'))app.deleteCashTx(${idx})"` : ''}>
-                  <div class="tx-left">
-                    <div class="tx-icon ${isIn ? 'in' : 'out'}">
-                      ${isIn
-                        ? `<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 11V3M3 7l4-4 4 4" stroke="var(--green)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`
-                        : `<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 3v8M3 7l4 4 4-4" stroke="var(--red)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`
-                      }
-                    </div>
-                    <div class="tx-info">
-                      <div class="tx-title">${tx.note || (isIn ? 'Cash In' : 'Cash Out')}</div>
-                      <div class="tx-date">${new Date(tx.date).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}</div>
-                    </div>
+        return Object.entries(groups).map(([label, txs]) => `
+          <div class="tx-group-label">${label}</div>
+          <div class="tx-list">${txs.map(tx => {
+            const idx = history.length - 1 - history.slice().reverse().indexOf(tx);
+            return `
+              <div class="tx-item" ${allowDelete ? `onclick="if(confirm('Delete this entry?'))app.deleteCashTx(${idx})"` : ''}>
+                <div class="tx-left">
+                  <div class="tx-icon ${tx.amount > 0 ? 'in' : 'out'}">
+                    ${tx.amount > 0
+                      ? `<svg viewBox="0 0 24 24" fill="none"><path d="M12 19V5M5 12l7-7 7 7" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+                      : `<svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12l7 7 7-7" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+                    }
                   </div>
-                  <div class="tx-amount ${isIn ? 'in' : 'out'}">${isIn ? '+' : '−'}${this.idr(Math.abs(tx.amount))}</div>
+                  <div class="tx-info">
+                    <div class="tx-title">${tx.note || (tx.amount > 0 ? 'Cash In' : 'Cash Out')}</div>
+                    <div class="tx-time">${new Date(tx.date).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}</div>
+                  </div>
                 </div>
-              `;
-            }).join('')}
-          </div>
-        `).join('') + '</div>';
+                <div class="tx-right">
+                  <div class="tx-amount ${tx.amount > 0 ? 'in' : 'out'}">${tx.amount > 0 ? '+' : ''}${this.idr(Math.abs(tx.amount))}</div>
+                </div>
+              </div>
+            `;
+          }).join('')}</div>
+        `).join('');
       },
 
       deleteCashTx(index) {
         this.data.cash.history.splice(index, 1);
         this.recalcCash();
-        this.save(); this.render();
-        this.toast('Deleted');
+        this.save();
+        this.render();
+        this.toast('Entry deleted');
+      },
+
+      cashPromptSpend() {
+        this.openAddWith(-1);
+      },
+
+      openAddWith(dir) {
+        const body = document.getElementById('addBody');
+        const title = document.getElementById('addTitle');
+        title.textContent = dir > 0 ? 'Add Income' : 'Add Expense';
+        body.innerHTML = `
+          <div class="field">
+            <label class="field-label">Amount</label>
+            <input class="field-input" id="cAmt" type="text" inputmode="numeric" placeholder="0" autofocus>
+          </div>
+          <div class="field">
+            <label class="field-label">Note</label>
+            <input class="field-input" id="cNote" placeholder="${dir > 0 ? 'e.g. ATM Withdrawal' : 'e.g. Lunch'}">
+          </div>
+          <button class="btn ${dir > 0 ? 'btn-green' : 'btn-primary'}" onclick="app.addCash(${dir})">
+            ${dir > 0 ? 'Save Income' : 'Save Expense'}
+          </button>
+        `;
+        document.getElementById('addSheet').classList.add('open');
+        setTimeout(() => body.querySelector('input')?.focus(), 120);
       },
 
       openAdd() {
         const body = document.getElementById('addBody');
         const title = document.getElementById('addTitle');
+
         if (this.tab === 'cards') {
           title.textContent = 'Add Card';
           body.innerHTML = `
-            <div class="field"><label class="field-label">Card Name</label><input class="field-input" id="cName" placeholder="e.g. BCA Debit" autocomplete="off"></div>
-            <div class="field"><label class="field-label">Type</label>
-              <select class="field-select" id="cType"><option>Debit</option><option>Credit</option><option>e-Money</option><option>Prepaid</option><option>Other</option></select>
+            <div class="field">
+              <label class="field-label">Card Name</label>
+              <input class="field-input" id="cName" placeholder="e.g. BCA Debit">
             </div>
-            <div class="field"><label class="field-label">Starting Balance</label><input class="field-input" id="cBal" type="text" inputmode="numeric" placeholder="0" autocomplete="off"></div>
-            <button class="btn btn-primary-blue" onclick="app.addCard()">Save Card</button>
+            <div class="field">
+              <label class="field-label">Last 4 digits</label>
+              <input class="field-input" id="cLast4" type="text" inputmode="numeric" maxlength="4" placeholder="1234">
+            </div>
+            <div class="field">
+              <label class="field-label">Type</label>
+              <select class="field-select" id="cType">
+                <option>Debit</option>
+                <option>Credit</option>
+                <option>e-Money</option>
+                <option>Prepaid</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="field">
+              <label class="field-label">Current Balance</label>
+              <input class="field-input" id="cBal" type="text" inputmode="numeric" placeholder="0">
+            </div>
+            <button class="btn btn-primary" onclick="app.addCard()">Add Card</button>
           `;
         } else {
-          title.textContent = 'Add Cash';
+          title.textContent = 'Add Transaction';
           body.innerHTML = `
-            <div class="field"><label class="field-label">Amount</label><input class="field-input" id="cAmt" type="text" inputmode="numeric" placeholder="0" autocomplete="off"></div>
-            <div class="field"><label class="field-label">Note</label><input class="field-input" id="cNote" placeholder="e.g. ATM withdrawal" autocomplete="off"></div>
-            <div class="split-btns">
-              <button class="btn btn-primary-green" onclick="app.addCash(1)">+ Income</button>
-              <button class="btn btn-secondary" onclick="app.addCash(-1)">− Expense</button>
+            <div class="field">
+              <label class="field-label">Amount</label>
+              <input class="field-input" id="cAmt" type="text" inputmode="numeric" placeholder="0">
+            </div>
+            <div class="field">
+              <label class="field-label">Note</label>
+              <input class="field-input" id="cNote" placeholder="e.g. ATM Withdrawal">
+            </div>
+            <div class="two-btns">
+              <button class="btn btn-green" onclick="app.addCash(1)">+ Income</button>
+              <button class="btn btn-primary" onclick="app.addCash(-1)">− Expense</button>
             </div>
           `;
         }
         document.getElementById('addSheet').classList.add('open');
-        setTimeout(() => body.querySelector('input')?.focus(), 150);
-      },
-
-      openSpend() {
-        const body = document.getElementById('addBody');
-        document.getElementById('addTitle').textContent = 'Spend Cash';
-        body.innerHTML = `
-          <div class="field"><label class="field-label">Amount</label><input class="field-input" id="cAmt" type="text" inputmode="numeric" placeholder="0" autocomplete="off"></div>
-          <div class="field"><label class="field-label">Note</label><input class="field-input" id="cNote" placeholder="e.g. Groceries" autocomplete="off"></div>
-          <button class="btn btn-secondary" onclick="app.addCash(-1)">− Record Spend</button>
-        `;
-        document.getElementById('addSheet').classList.add('open');
-        setTimeout(() => body.querySelector('input')?.focus(), 150);
+        setTimeout(() => body.querySelector('input')?.focus(), 120);
       },
 
       closeAdd() {
@@ -823,27 +1181,37 @@
 
       addCash(dir) {
         const raw = document.getElementById('cAmt').value;
-        const amt = Math.round(parseFloat(raw.replace(/\./g,'').replace(/,/g,'.')) || 0);
-        if (!amt || amt <= 0) return this.toast('Enter a valid amount');
-        const note = document.getElementById('cNote').value.trim() || (dir > 0 ? 'Cash In' : 'Cash Out');
+        const amt = Math.round(parseFloat(raw.replace(/\./g, '').replace(/,/g, '.')) || 0);
+        if (!amt || amt <= 0) return this.toast('Enter an amount');
+        const note = (document.getElementById('cNote')?.value || '').trim() || (dir > 0 ? 'Cash In' : 'Cash Out');
         this.data.cash.history.push({ amount: dir * amt, note, date: Date.now() });
-        this.recalcCash(); this.save(); this.closeAdd(); this.render();
-        this.toast(dir > 0 ? 'Cash added' : 'Spend recorded');
-      },
-
-      addCard() {
-        const name = document.getElementById('cName').value.trim();
-        const type = document.getElementById('cType').value;
-        const bal = Math.round(parseFloat(document.getElementById('cBal').value.replace(/\./g,'').replace(/,/g,'.')) || 0);
-        if (!name) return this.toast('Enter a card name');
-        this.data.cards.push({ id: crypto.randomUUID(), name, type, balance: bal, history: [{ amount: bal, note: 'Starting balance', date: Date.now() }] });
-        this.save(); this.closeAdd(); this.render();
-        this.toast('Card added');
+        this.recalcCash();
+        this.save();
+        this.closeAdd();
+        this.render();
+        this.toast(dir > 0 ? 'Income saved' : 'Expense saved');
       },
 
       recalcCash() {
         this.data.cash.balance = this.data.cash.history.reduce((s, t) => s + t.amount, 0);
         if (this.data.cash.balance < 0) this.data.cash.balance = 0;
+      },
+
+      addCard() {
+        const name = document.getElementById('cName').value.trim();
+        const last4 = (document.getElementById('cLast4').value || '').trim().slice(-4).padStart(4, '0');
+        const type = document.getElementById('cType').value;
+        const bal = Math.round(parseFloat((document.getElementById('cBal').value || '0').replace(/\./g, '').replace(/,/g, '.')) || 0);
+        if (!name) return this.toast('Enter card name');
+        this.data.cards.push({
+          id: crypto.randomUUID(),
+          name, type, last4, balance: bal,
+          history: bal ? [{ amount: bal, note: 'Starting balance', date: Date.now() }] : []
+        });
+        this.save();
+        this.closeAdd();
+        this.render();
+        this.toast('Card added');
       },
 
       openCard(id) {
@@ -852,76 +1220,69 @@
         this.currentCardId = id;
         const idx = this.data.cards.indexOf(card);
         const pal = this.cardPalettes[idx % this.cardPalettes.length];
+        const last4 = '•••• ' + (card.last4 || '0000');
+
         document.getElementById('detailTitle').textContent = card.name;
         document.getElementById('detailBody').innerHTML = `
-          <div class="detail-card-hero" style="background:${pal.bg};box-shadow:0 16px 48px rgba(0,0,0,0.6),0 0 0 1px rgba(255,255,255,0.07)">
-            <div class="card-shimmer"></div>
-            <div class="card-noise"></div>
-            <div class="card-top-row">
-              <div class="emv-chip"></div>
-              <div class="nfc-icon">
-                <svg viewBox="0 0 20 20" fill="none">
-                  <path d="M10 10 C10 7.5,12 6,14 7.5" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
-                  <path d="M10 10 C10 5.5,15 3.5,17 7" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
-                  <circle cx="10" cy="10" r="1.2" fill="white"/>
-                </svg>
+          <div class="detail-card" style="background:${pal.bg}">
+            <div class="card-shine"></div>
+            <div class="card-row">
+              <div class="card-bank-name">${card.name}</div>
+              <div class="card-network">
+                <div class="card-network-circle"></div>
+                <div class="card-network-circle"></div>
               </div>
             </div>
-            <div class="card-bottom">
-              <div class="card-type-badge">${card.type}</div>
-              <div class="detail-balance-label">Current Balance</div>
-              <div class="detail-balance-value">${this.idr(card.balance || 0)}</div>
+            <div class="card-row"><div class="card-chip-wrap"><div class="card-chip"></div><div class="card-nfc"></div></div></div>
+            <div class="card-row" style="align-items:flex-end">
+              <div class="card-bottom">
+                <div class="card-number" style="font-size:13px;color:rgba(255,255,255,0.5);letter-spacing:0.12em">${last4}</div>
+                <div style="font-size:16px;font-weight:700;color:white;position:relative;z-index:3">${card.type}</div>
+              </div>
+              <div style="text-align:right;position:relative;z-index:3">
+                <div style="font-size:10px;color:rgba(255,255,255,0.55);font-weight:700;text-transform:uppercase;letter-spacing:0.07em">Balance</div>
+                <div class="detail-balance">${this.idr(card.balance || 0)}</div>
+              </div>
             </div>
           </div>
-          <div class="quick-actions" style="padding:0 0 28px">
-            <button class="qa-btn primary-green" onclick="app.adjustCard(1)">
-              <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v11M1 6.5h11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-              Top Up
-            </button>
-            <button class="qa-btn secondary" onclick="app.adjustCard(-1)">
-              <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M1 6.5h11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-              Spend
-            </button>
+          <div class="two-btns" style="margin-bottom:24px">
+            <button class="btn btn-green" style="margin-top:0" onclick="app.adjustCard(1)">+ Top Up</button>
+            <button class="btn btn-primary" style="margin-top:0" onclick="app.adjustCard(-1)">− Spend</button>
           </div>
-          <div class="section-header" style="padding:0 0 12px"><span class="section-label">History</span></div>
-          ${this.renderTxList(card.history || [], false)}
+          <div class="section-header">
+            <div class="section-title">History</div>
+          </div>
+          <div class="tx-section">
+            ${this.renderTxList(card.history || [], false)}
+          </div>
         `;
         document.getElementById('detailView').classList.add('open');
       },
 
       adjustCard(dir) {
-        const body = document.getElementById('addBody');
-        document.getElementById('addTitle').textContent = dir > 0 ? 'Top Up' : 'Spend';
-        body.innerHTML = `
-          <div class="field"><label class="field-label">Amount</label><input class="field-input" id="cAmt" type="text" inputmode="numeric" placeholder="0" autocomplete="off"></div>
-          <div class="field"><label class="field-label">Note</label><input class="field-input" id="cNote" placeholder="${dir > 0 ? 'e.g. Transfer' : 'e.g. Purchase'}" autocomplete="off"></div>
-          <button class="btn ${dir > 0 ? 'btn-primary-green' : 'btn-secondary'}" onclick="app.confirmAdjust(${dir})">${dir > 0 ? '+ Confirm Top Up' : '− Confirm Spend'}</button>
-        `;
-        document.getElementById('addSheet').classList.add('open');
-        setTimeout(() => body.querySelector('input')?.focus(), 150);
-      },
-
-      confirmAdjust(dir) {
         const card = this.data.cards.find(c => c.id === this.currentCardId);
         if (!card) return;
-        const raw = document.getElementById('cAmt').value;
-        const amt = Math.round(parseFloat(raw.replace(/\./g,'').replace(/,/g,'.')) || 0);
-        if (!amt || amt <= 0) return this.toast('Enter a valid amount');
-        const note = document.getElementById('cNote').value.trim() || (dir > 0 ? 'Top up' : 'Spend');
+        const raw = prompt(dir > 0 ? 'Top up amount:' : 'Spend amount:');
+        if (!raw) return;
+        const amt = Math.round(parseFloat(raw.replace(/\./g, '').replace(/,/g, '.')) || 0);
+        if (!amt || amt <= 0) return;
+        const note = prompt('Note (optional):') || (dir > 0 ? 'Top up' : 'Spend');
         card.balance = (card.balance || 0) + (dir * amt);
         if (!card.history) card.history = [];
         card.history.push({ amount: dir * amt, note, date: Date.now() });
-        this.save(); this.closeAdd();
+        this.save();
         this.openCard(this.currentCardId);
         this.render();
-        this.toast(dir > 0 ? 'Balance updated' : 'Spend recorded');
+        this.toast(dir > 0 ? 'Balance updated' : 'Expense recorded');
       },
 
       deleteCard() {
         if (!confirm('Delete this card?')) return;
         this.data.cards = this.data.cards.filter(c => c.id !== this.currentCardId);
-        this.save(); this.closeDetail(); this.render();
-        this.toast('Card deleted');
+        this.save();
+        this.closeDetail();
+        this.render();
+        this.toast('Card removed');
       },
 
       closeDetail() {
@@ -929,8 +1290,13 @@
         this.currentCardId = null;
       },
 
-      showMenu() { document.getElementById('menuSheet').classList.add('open'); },
-      closeMenu() { document.getElementById('menuSheet').classList.remove('open'); },
+      showMenu() {
+        document.getElementById('menuSheet').classList.add('open');
+      },
+
+      closeMenu() {
+        document.getElementById('menuSheet').classList.remove('open');
+      },
 
       exportData() {
         const blob = new Blob([JSON.stringify(this.data, null, 2)], { type: 'application/json' });
@@ -948,9 +1314,13 @@
         reader.onload = e => {
           try {
             this.data = JSON.parse(e.target.result);
-            this.save(); this.render(); this.closeMenu();
+            this.save();
+            this.render();
+            this.closeMenu();
             this.toast('Backup restored');
-          } catch(err) { this.toast('Invalid backup file'); }
+          } catch {
+            this.toast('Invalid backup file');
+          }
         };
         reader.readAsText(file);
       },
@@ -959,7 +1329,9 @@
         if (!confirm('Erase all data?')) return;
         if (!confirm('This cannot be undone. Continue?')) return;
         this.data = { cash: { balance: 0, history: [] }, cards: [] };
-        this.save(); this.closeMenu(); this.render();
+        this.save();
+        this.closeMenu();
+        this.render();
         this.toast('All data cleared');
       },
 
