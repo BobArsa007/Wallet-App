@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#000000">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <title>Dompet</title>
+  <style>
+    :root {
+      --bg: #000000;
+      --surface: #111111;
+      --surface-raised: #181818;
+      --surface-hover: #222222;
+      --border: rgba(255,255,255,0.06);
+      --text: #ffffff;
+      --text-secondary: rgba(255,255,255,0.55);
+      --text-tertiary: rgba(255,255,255,0.3);
+      --accent-cash: #34d399;
+      --accent-card: #60a5fa;
+      --danger: #f43f5e;
+      --radius-xl: 24px;
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      --smooth: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    #app {
+      height: 100%;
+      max-width: 430px;
+      margin: 0 auto;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg);
+    }
+    .app-header {
+      padding: 16px 24px 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 10;
+    }
+    .app-header h1 {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.6px;
+    }
+    .icon-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--surface-raised);
+      border: 1px solid var(--border);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.15s, background 0.2s;
+    }
+    .icon-btn:active { transform: scale(0.88); background: var(--surface-hover); }
+    main {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 0 20px 100px;
+    }
+    main::-webkit-scrollbar { display: none; }
+    .hero {
+      padding: 12px 4px 28px;
+    }
+    .hero-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+    }
+    .hero-amount {
+      font-size: 46px;
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      font-variant-numeric: tabular-nums;
+      line-height: 1.1;
+      word-break: break-all;
+    }
+    .hero-amount.cash {
+      background: linear-gradient(135deg, #34d399, #10b981);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-amount.cards {
+      background: linear-gradient(135deg, #60a5fa, #818cf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .actions {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .action-btn {
+      flex: 1;
+      height: 56px;
+      border-radius: var(--radius-lg);
+      border: none;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s var(--smooth);
+    }
+    .action-btn:active { transform: scale(0.96); }
+    .action-btn.add {
+      background: var(--accent-cash);
+      color: #064e3b;
+      box-shadow: 0 4px 24px rgba(16,185,129,0.25);
+    }
+    .action-btn.spend {
+      background: var(--surface-raised);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .action-btn.add-card {
+      background: var(--accent-card);
+      color: white;
+      box-shadow: 0 4px 24px rgba(59,130,246,0.25);
+    }
+    .section-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin: 24px 4px 10px;
+    }
+    .date-group {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      padding: 16px 4px 8px;
+    }
+    .tx-list { display: flex; flex-direction: column; gap: 8px; }
+    .tx-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      background: var(--surface-raised);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all 0.15s;
+      border: 1px solid var(--border);
+    }
+    .tx-item:active { transform: scale(0.98); background: var(--surface-hover); }
+    .tx-left { display: flex; align-items: center; gap: 14px; }
+    .tx-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+      background: var(--surface);
+    }
+    .tx-icon.in { color: var(--accent-cash); }
+    .tx-icon.out { color: var(--danger); }
+    .tx-info { display: flex; flex-direction: column; gap: 3px; }
+    .tx-title { font-size: 15px; font-weight: 600; }
+    .tx-date { font-size: 12px; color: var(--text-tertiary); font-weight: 500; }
+    .tx-amount {
+      font-size: 16px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+    .tx-amount.in { color: var(--accent-cash); }
+    .tx-amount.out { color: var(--text); }
+    .cards-grid { display: grid; gap: 16px; padding-bottom: 20px; }
+    .card-visual {
+      border-radius: var(--radius-xl);
+      padding: 24px;
+      cursor: pointer;
+      transition: all 0.3s var(--smooth);
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 1.586;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .card-visual:active { transform: scale(0.98) translateY(2px); }
+    .card-shine {
+      position: absolute;
+      inset: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(to bottom right, rgba(255,255,255,0) 40%, rgba(255,255,255,0.07) 50%, rgba(255,255,255,0) 60%);
+      transform: rotate(25deg);
+      pointer-events: none;
+    }
+    .card-chip {
+      width: 40px;
+      height: 30px;
+      background: linear-gradient(135deg, #fbbf24, #d97706);
+      border-radius: 6px;
+      position: relative;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      z-index: 2;
+    }
+    .card-chip::before, .card-chip::after {
+      content: '';
+      position: absolute;
+      border: 1px solid rgba(0,0,0,0.2);
+      border-radius: 4px;
+    }
+    .card-chip::before { inset: 4px; }
+    .card-chip::after { inset: 8px; border-radius: 2px; }
+    .card-top { display: flex; justify-content: space-between; align-items: flex-start; position: relative; z-index: 2; }
+    .card-contactless { font-size: 20px; opacity: 0.5; }
+    .card-name { font-size: 18px; font-weight: 700; color: white; z-index: 2; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+    .card-type { font-size: 12px; color: rgba(255,255,255,0.7); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; z-index: 2; }
+    .card-balance { font-size: 26px; font-weight: 800; color: white; font-variant-numeric: tabular-nums; z-index: 2; text-shadow: 0 1px 2px rgba(0,0,0,0.2); margin-top: 4px; }
+    .empty {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-tertiary);
+    }
+    .empty-icon {
+      width: 80px;
+      height: 80px;
+      background: var(--surface-raised);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      margin: 0 auto 16px;
+      border: 1px solid var(--border);
+    }
+    .empty-title { font-size: 17px; font-weight: 700; color: var(--text-secondary); margin-bottom: 4px; }
+    .empty-desc { font-size: 14px; }
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 430px;
+      background: rgba(17,17,17,0.85);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
+      z-index: 50;
+    }
+    .nav-btn {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      background: none;
+      border: none;
+      color: var(--text-tertiary);
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: color 0.2s;
+      padding: 4px;
+    }
+    .nav-btn.active { color: var(--text); }
+    .nav-icon {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      transition: transform 0.2s var(--spring);
+    }
+    .nav-btn.active .nav-icon { transform: scale(1.1); }
+    .fab {
+      position: fixed;
+      bottom: calc(84px + env(safe-area-inset-bottom));
+      right: 20px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: white;
+      color: black;
+      border: none;
+      font-size: 28px;
+      font-weight: 300;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+      z-index: 40;
+      transition: all 0.3s var(--spring);
+    }
+    .fab:active { transform: scale(0.88); }
+    .fab.hidden { transform: scale(0) translateY(20px); opacity: 0; pointer-events: none; }
+    .sheet-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(0,0,0,0.65);
+      backdrop-filter: blur(6px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s;
+    }
+    .sheet-overlay.open { opacity: 1; pointer-events: all; }
+    .sheet {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      max-width: 430px;
+      margin: 0 auto;
+      background: var(--surface);
+      border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+      padding: 8px 24px calc(28px + env(safe-area-inset-bottom));
+      transform: translateY(100%);
+      transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+      max-height: 92vh;
+      overflow-y: auto;
+    }
+    .sheet-overlay.open .sheet { transform: translateY(0); }
+    .sheet-handle {
+      width: 36px;
+      height: 5px;
+      background: var(--surface-hover);
+      border-radius: 3px;
+      margin: 0 auto 24px;
+    }
+    .sheet-title { font-size: 22px; font-weight: 800; margin-bottom: 24px; }
+    .detail-view {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 100%;
+      max-width: 430px;
+      background: var(--bg);
+      transform: translateX(-50%) translateX(100%);
+      transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+      display: flex;
+      flex-direction: column;
+      z-index: 80;
+    }
+    .detail-view.open { transform: translateX(-50%) translateX(0); }
+    .detail-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .detail-header h2 { font-size: 20px; font-weight: 700; flex: 1; }
+    .detail-body { flex: 1; overflow-y: auto; padding: 20px; }
+    .detail-hero {
+      border-radius: var(--radius-xl);
+      padding: 28px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 1.586;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+    }
+    .detail-hero .card-chip { z-index: 2; }
+    .detail-hero .card-name { z-index: 2; font-size: 20px; }
+    .detail-hero .card-type { z-index: 2; }
+    .detail-balance-label { font-size: 12px; color: rgba(255,255,255,0.6); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; z-index: 2; }
+    .detail-balance-big { font-size: 36px; font-weight: 800; color: white; margin-top: 4px; font-variant-numeric: tabular-nums; z-index: 2; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+    .field { margin-bottom: 20px; }
+    .field-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .field-input, .field-select {
+      width: 100%;
+      padding: 16px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      color: var(--text);
+      font-size: 17px;
+      outline: none;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .field-input:focus, .field-select:focus {
+      border-color: var(--accent-card);
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
+    }
+    .btn {
+      width: 100%;
+      padding: 18px;
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn-primary {
+      background: var(--accent-card);
+      color: white;
+      box-shadow: 0 4px 20px rgba(59,130,246,0.25);
+      margin-top: 8px;
+    }
+    .btn-danger {
+      background: rgba(244,63,94,0.12);
+      color: var(--danger);
+      border: 1px solid rgba(244,63,94,0.2);
+      margin-top: 8px;
+    }
+    .btn-secondary {
+      background: var(--surface-raised);
+      color: var(--text);
+      border: 1px solid var(--border);
+      margin-top: 8px;
+    }
+    .toast {
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-60px);
+      background: var(--surface-raised);
+      color: var(--text);
+      padding: 14px 24px;
+      border-radius: 100px;
+      font-size: 14px;
+      font-weight: 700;
+      opacity: 0;
+      transition: all 0.4s var(--spring);
+      z-index: 300;
+      pointer-events: none;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+      white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .hidden { display: none !important; }
+    * { scrollbar-width: none; }
+    *::-webkit-scrollbar { display: none; }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="app-header">
+      <h1>Dompet</h1>
+      <button class="icon-btn" onclick="app.showMenu()" aria-label="Menu">☰</button>
+    </div>
+
+    <main id="main"></main>
+
+    <div class="bottom-nav">
+      <button class="nav-btn active" onclick="app.switchTab('cash')" id="nav-cash">
+        <span class="nav-icon">💵</span>
+        <span>Cash</span>
+      </button>
+      <button class="nav-btn" onclick="app.switchTab('cards')" id="nav-cards">
+        <span class="nav-icon">💳</span>
+        <span>Cards</span>
+      </button>
+    </div>
+
+    <button class="fab" id="fab" onclick="app.openAdd()">+</button>
+
+    <div class="sheet-overlay" id="addSheet" onclick="if(event.target===this)app.closeAdd()">
+      <div class="sheet">
+        <div class="sheet-handle"></div>
+        <div class="sheet-title" id="addTitle">Add</div>
+        <div id="addBody"></div>
+      </div>
+    </div>
+
+    <div class="detail-view" id="detailView">
+      <div class="detail-header">
+        <button class="icon-btn" onclick="app.closeDetail()">←</button>
+        <h2 id="detailTitle">Card</h2>
+        <button class="icon-btn" onclick="app.deleteCard()" style="color:var(--danger)" aria-label="Delete">🗑</button>
+      </div>
+      <div class="detail-body" id="detailBody"></div>
+    </div>
+
+    <div class="sheet-overlay" id="menuSheet" onclick="if(event.target===this)app.closeMenu()">
+      <div class="sheet">
+        <div class="sheet-handle"></div>
+        <div class="sheet-title">Menu</div>
+        <button class="btn btn-secondary" onclick="app.exportData()">📤 Export Backup</button>
+        <input type="file" id="importInput" style="display:none" accept=".json" onchange="app.importData(this)">
+        <button class="btn btn-secondary" onclick="document.getElementById('importInput').click()">📥 Import Backup</button>
+        <button class="btn btn-danger" onclick="app.clearAll()">⚠️ Clear All Data</button>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+  </div>
+
+  <script>
+    const app = {
+      tab: 'cash',
+      data: { cash: { balance: 0, history: [] }, cards: [] },
+      currentCardId: null,
+      cardPalettes: [
+        { bg: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #312e81 100%)', shadow: 'rgba(30,58,138,0.35)' },
+        { bg: 'linear-gradient(135deg, #701a75 0%, #86198f 50%, #581c87 100%)', shadow: 'rgba(134,25,143,0.35)' },
+        { bg: 'linear-gradient(135deg, #064e3b 0%, #065f46 50%, #115e59 100%)', shadow: 'rgba(6,78,59,0.35)' },
+        { bg: 'linear-gradient(135deg, #7c2d12 0%, #9a3412 50%, #7c2d12 100%)', shadow: 'rgba(154,52,18,0.35)' },
+        { bg: 'linear-gradient(135deg, #1f2937 0%, #374151 50%, #1f2937 100%)', shadow: 'rgba(31,41,55,0.35)' },
+      ],
+
+      init() {
+        const raw = localStorage.getItem('dompet_data');
+        if (raw) this.data = JSON.parse(raw);
+        this.render();
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.register('./sw.js')
+            .then(() => console.log('SW registered'))
+            .catch(err => console.log('SW failed', err));
+        }
+      },
+
+      save() {
+        localStorage.setItem('dompet_data', JSON.stringify(this.data));
+      },
+
+      idr(n) {
+        return 'Rp ' + Math.round(n).toLocaleString('id-ID');
+      },
+
+      formatDate(ts) {
+        const d = new Date(ts);
+        const now = new Date();
+        const yest = new Date(now); yest.setDate(yest.getDate() - 1);
+        if (d.toDateString() === now.toDateString()) return 'Today';
+        if (d.toDateString() === yest.toDateString()) return 'Yesterday';
+        return d.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'short' });
+      },
+
+      switchTab(t) {
+        this.tab = t;
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('nav-' + t).classList.add('active');
+        this.render();
+      },
+
+      render() {
+        const main = document.getElementById('main');
+        const fab = document.getElementById('fab');
+        fab.classList.remove('hidden');
+
+        if (this.tab === 'cash') {
+          main.innerHTML = `
+            <div class="hero">
+              <div class="hero-label">Cash on Hand</div>
+              <div class="hero-amount cash">${this.idr(this.data.cash.balance)}</div>
+            </div>
+            <div class="actions">
+              <button class="action-btn add" onclick="app.cashPrompt(1)">+ Add Cash</button>
+              <button class="action-btn spend" onclick="app.cashPrompt(-1)">− Spend</button>
+            </div>
+            ${this.renderTxList(this.data.cash.history, true)}
+          `;
+        } else {
+          const total = this.data.cards.reduce((s, c) => s + (c.balance || 0), 0);
+          main.innerHTML = `
+            <div class="hero">
+              <div class="hero-label">Total Card Balance</div>
+              <div class="hero-amount cards">${this.idr(total)}</div>
+            </div>
+            <div class="actions">
+              <button class="action-btn add-card" onclick="app.openAdd()">+ Add Card</button>
+            </div>
+            <div class="section-title">Your Cards</div>
+            ${this.data.cards.length === 0 ? `
+              <div class="empty">
+                <div class="empty-icon">💳</div>
+                <div class="empty-title">No cards yet</div>
+                <div class="empty-desc">Tap + to add your first card</div>
+              </div>
+            ` : `<div class="cards-grid">${this.data.cards.map((card, i) => {
+              const pal = this.cardPalettes[i % this.cardPalettes.length];
+              return `
+                <div class="card-visual" onclick="app.openCard('${card.id}')" style="background:${pal.bg};box-shadow:0 10px 30px ${pal.shadow}">
+                  <div class="card-shine"></div>
+                  <div class="card-top">
+                    <div class="card-chip"></div>
+                    <div class="card-contactless">📶</div>
+                  </div>
+                  <div>
+                    <div class="card-type">${card.type}</div>
+                    <div class="card-name">${card.name}</div>
+                    <div class="card-balance">${this.idr(card.balance || 0)}</div>
+                  </div>
+                </div>
+              `;
+            }).join('')}</div>`}
+          `;
+          if (this.data.cards.length === 0) fab.classList.add('hidden');
+        }
+      },
+
+      renderTxList(history, allowDelete) {
+        if (!history.length) return `
+          <div class="empty" style="padding-top:40px">
+            <div class="empty-icon">📋</div>
+            <div class="empty-title">No transactions</div>
+            <div class="empty-desc">Your history will appear here</div>
+          </div>
+        `;
+
+        const groups = {};
+        history.slice().reverse().forEach(tx => {
+          const label = this.formatDate(tx.date);
+          if (!groups[label]) groups[label] = [];
+          groups[label].push(tx);
+        });
+
+        return Object.entries(groups).map(([label, txs]) => `
+          <div class="date-group">${label}</div>
+          <div class="tx-list">${txs.map(tx => `
+            <div class="tx-item" ${allowDelete ? `onclick="if(confirm('Delete this entry?'))app.deleteCashTx(${history.length - 1 - history.slice().reverse().indexOf(tx)})"` : ''}>
+              <div class="tx-left">
+                <div class="tx-icon ${tx.amount > 0 ? 'in' : 'out'}">${tx.amount > 0 ? '↓' : '↑'}</div>
+                <div class="tx-info">
+                  <div class="tx-title">${tx.note || (tx.amount > 0 ? 'Cash In' : 'Cash Out')}</div>
+                  <div class="tx-date">${new Date(tx.date).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}</div>
+                </div>
+              </div>
+              <div class="tx-amount ${tx.amount > 0 ? 'in' : ''}">${tx.amount > 0 ? '+' : ''}${this.idr(Math.abs(tx.amount))}</div>
+            </div>
+          `).join('')}</div>
+        `).join('');
+      },
+
+      deleteCashTx(index) {
+        this.data.cash.history.splice(index, 1);
+        this.recalcCash();
+        this.save();
+        this.render();
+        this.toast('Deleted');
+      },
+
+      cashPrompt(dir) {
+        const raw = prompt(dir > 0 ? 'Jumlah masuk:' : 'Jumlah keluar:');
+        if (!raw) return;
+        const amt = Math.round(parseFloat(raw.replace(/\./g, '').replace(/,/g, '.')));
+        if (!amt || amt <= 0) return;
+        const note = prompt('Catatan (opsional):') || '';
+        this.data.cash.history.push({ amount: dir * amt, note, date: Date.now() });
+        this.recalcCash();
+        this.save();
+        this.render();
+        this.toast(dir > 0 ? 'Cash ditambahkan' : 'Cash dikurangi');
+      },
+
+      recalcCash() {
+        this.data.cash.balance = this.data.cash.history.reduce((s, t) => s + t.amount, 0);
+        if (this.data.cash.balance < 0) this.data.cash.balance = 0;
+      },
+
+      openAdd() {
+        const body = document.getElementById('addBody');
+        const title = document.getElementById('addTitle');
+        if (this.tab === 'cards') {
+          title.textContent = 'Add Card';
+          body.innerHTML = `
+            <div class="field"><label class="field-label">Card Name</label><input class="field-input" id="cName" placeholder="e.g. BCA Debit"></div>
+            <div class="field"><label class="field-label">Type</label>
+              <select class="field-select" id="cType">
+                <option>Debit</option><option>Credit</option><option>e-Money</option><option>Prepaid</option><option>Other</option>
+              </select>
+            </div>
+            <div class="field"><label class="field-label">Current Balance</label><input class="field-input" id="cBal" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="0"></div>
+            <button class="btn btn-primary" onclick="app.addCard()">Save Card</button>
+          `;
+        } else {
+          title.textContent = 'Add Cash';
+          body.innerHTML = `
+            <div class="field"><label class="field-label">Amount</label><input class="field-input" id="cAmt" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="0"></div>
+            <div class="field"><label class="field-label">Note</label><input class="field-input" id="cNote" placeholder="e.g. ATM withdrawal"></div>
+            <div class="actions" style="margin-top:8px">
+              <button class="action-btn add" style="flex:1" onclick="app.addCash(1)">+ Income</button>
+              <button class="action-btn spend" style="flex:1" onclick="app.addCash(-1)">− Expense</button>
+            </div>
+          `;
+        }
+        document.getElementById('addSheet').classList.add('open');
+        setTimeout(() => body.querySelector('input')?.focus(), 100);
+      },
+
+      closeAdd() {
+        document.getElementById('addSheet').classList.remove('open');
+      },
+
+      addCash(dir) {
+        const raw = document.getElementById('cAmt').value;
+        const amt = Math.round(parseFloat(raw.replace(/\./g, '').replace(/,/g, '.')));
+        if (!amt || amt <= 0) return this.toast('Enter amount');
+        const note = document.getElementById('cNote').value || (dir > 0 ? 'Cash In' : 'Cash Out');
+        this.data.cash.history.push({ amount: dir * amt, note, date: Date.now() });
+        this.recalcCash();
+        this.save();
+        this.closeAdd();
+        this.render();
+        this.toast(dir > 0 ? 'Cash ditambahkan' : 'Cash dikurangi');
+      },
+
+      addCard() {
+        const name = document.getElementById('cName').value.trim();
+        const type = document.getElementById('cType').value;
+        const bal = Math.round(parseFloat(document.getElementById('cBal').value.replace(/\./g, '').replace(/,/g, '.')) || 0);
+        if (!name) return this.toast('Enter card name');
+        this.data.cards.push({
+          id: crypto.randomUUID(),
+          name, type, balance: bal,
+          history: [{ amount: bal, note: 'Starting balance', date: Date.now() }]
+        });
+        this.save();
+        this.closeAdd();
+        this.render();
+        this.toast('Card added');
+      },
+
+      openCard(id) {
+        const card = this.data.cards.find(c => c.id === id);
+        if (!card) return;
+        this.currentCardId = id;
+        const idx = this.data.cards.indexOf(card);
+        const pal = this.cardPalettes[idx % this.cardPalettes.length];
+
+        document.getElementById('detailTitle').textContent = card.name;
+        document.getElementById('detailBody').innerHTML = `
+          <div class="detail-hero" style="background:${pal.bg};box-shadow:0 10px 40px ${pal.shadow}">
+            <div class="card-shine"></div>
+            <div class="card-top">
+              <div class="card-chip"></div>
+              <div class="card-contactless">📶</div>
+            </div>
+            <div>
+              <div class="card-type">${card.type}</div>
+              <div class="detail-balance-label">Current Balance</div>
+              <div class="detail-balance-big">${this.idr(card.balance || 0)}</div>
+            </div>
+          </div>
+          <div class="actions" style="margin-bottom:24px">
+            <button class="action-btn add" onclick="app.adjustCard(1)">+ Top Up</button>
+            <button class="action-btn spend" onclick="app.adjustCard(-1)">− Spend</button>
+          </div>
+          <div class="section-title">History</div>
+          ${this.renderTxList(card.history || [], false)}
+        `;
+        document.getElementById('detailView').classList.add('open');
+      },
+
+      adjustCard(dir) {
+        const card = this.data.cards.find(c => c.id === this.currentCardId);
+        if (!card) return;
+        const raw = prompt(dir > 0 ? 'Jumlah top up:' : 'Jumlah spend:');
+        if (!raw) return;
+        const amt = Math.round(parseFloat(raw.replace(/\./g, '').replace(/,/g, '.')));
+        if (!amt || amt <= 0) return;
+        const note = prompt('Catatan (opsional):') || (dir > 0 ? 'Top up' : 'Spend');
+        card.balance = (card.balance || 0) + (dir * amt);
+        if (!card.history) card.history = [];
+        card.history.push({ amount: dir * amt, note, date: Date.now() });
+        this.save();
+        this.openCard(this.currentCardId);
+        this.render();
+        this.toast(dir > 0 ? 'Balance ditambah' : 'Balance dikurangi');
+      },
+
+      deleteCard() {
+        if (!confirm('Delete this card?')) return;
+        this.data.cards = this.data.cards.filter(c => c.id !== this.currentCardId);
+        this.save();
+        this.closeDetail();
+        this.render();
+        this.toast('Card deleted');
+      },
+
+      closeDetail() {
+        document.getElementById('detailView').classList.remove('open');
+        this.currentCardId = null;
+      },
+
+      showMenu() {
+        document.getElementById('menuSheet').classList.add('open');
+      },
+
+      closeMenu() {
+        document.getElementById('menuSheet').classList.remove('open');
+      },
+
+      exportData() {
+        const blob = new Blob([JSON.stringify(this.data, null, 2)], { type: 'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `dompet-backup-${new Date().toISOString().split('T')[0]}.json`;
+        a.click();
+        this.toast('Backup exported');
+      },
+
+      importData(input) {
+        const file = input.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = e => {
+          try {
+            this.data = JSON.parse(e.target.result);
+            this.save();
+            this.render();
+            this.closeMenu();
+            this.toast('Backup restored');
+          } catch (err) {
+            this.toast('Invalid backup file');
+          }
+        };
+        reader.readAsText(file);
+      },
+
+      clearAll() {
+        if (!confirm('Erase all data?')) return;
+        if (!confirm('This cannot be undone. Continue?')) return;
+        this.data = { cash: { balance: 0, history: [] }, cards: [] };
+        this.save();
+        this.closeMenu();
+        this.render();
+        this.toast('All data cleared');
+      },
+
+      toast(msg) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 2200);
+      }
+    };
+
+    app.init();
+  </script>
+</body>
+</html>
