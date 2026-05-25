@@ -10,33 +10,48 @@
   <link rel="apple-touch-icon" href="icon.svg">
   <title>Dompet</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap');
+
     :root {
-      --bg: #000000;
-      --surface: #111111;
-      --surface-raised: #181818;
-      --surface-hover: #222222;
+      --bg: #050507;
+      --surface: #111116;
+      --surface-raised: #16161d;
+      --surface-hover: #1c1c26;
       --border: rgba(255,255,255,0.06);
-      --text: #ffffff;
-      --text-secondary: rgba(255,255,255,0.55);
-      --text-tertiary: rgba(255,255,255,0.3);
-      --accent-cash: #34d399;
-      --accent-card: #60a5fa;
-      --danger: #f43f5e;
-      --radius-xl: 24px;
-      --radius-lg: 16px;
-      --radius-md: 12px;
-      --spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      --smooth: cubic-bezier(0.4, 0, 0.2, 1);
+      --border-subtle: rgba(255,255,255,0.04);
+      --text: #f5f5f7;
+      --text-secondary: rgba(245,245,247,0.52);
+      --text-tertiary: rgba(245,245,247,0.28);
+      --green: #30d158;
+      --green-dim: rgba(48,209,88,0.13);
+      --blue: #0a84ff;
+      --blue-dim: rgba(10,132,255,0.13);
+      --red: #ff453a;
+      --red-dim: rgba(255,69,58,0.11);
+      --r-card: 22px;
+      --r-pill: 100px;
+      --r-md: 14px;
+      --ease-out: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+      --spring-soft: cubic-bezier(0.175, 0.885, 0.32, 1.1);
     }
-    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+
+    *, *::before, *::after {
+      margin: 0; padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
     html, body {
       height: 100%;
       background: var(--bg);
       color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       overflow: hidden;
       -webkit-font-smoothing: antialiased;
     }
+
     #app {
       height: 100%;
       max-width: 430px;
@@ -46,437 +61,424 @@
       flex-direction: column;
       background: var(--bg);
     }
+
+    /* HEADER */
     .app-header {
-      padding: 16px 24px 8px;
+      padding: max(env(safe-area-inset-top, 16px), 16px) 20px 4px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       z-index: 10;
     }
-    .app-header h1 {
-      font-size: 32px;
-      font-weight: 800;
-      letter-spacing: -0.6px;
+
+    .app-header-logo {
+      display: flex;
+      align-items: center;
+      gap: 9px;
     }
+
+    .logo-mark {
+      width: 32px; height: 32px;
+      border-radius: 9px;
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      border: 1px solid rgba(255,255,255,0.1);
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+    .logo-mark::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(10,132,255,0.3), rgba(48,209,88,0.2));
+    }
+    .logo-mark svg { position: relative; z-index: 1; }
+
+    .app-title {
+      font-size: 17px; font-weight: 600;
+      letter-spacing: -0.3px; color: var(--text);
+    }
+
     .icon-btn {
-      width: 40px;
-      height: 40px;
+      width: 36px; height: 36px;
       border-radius: 50%;
       background: var(--surface-raised);
       border: 1px solid var(--border);
-      color: var(--text);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      color: var(--text-secondary);
+      display: flex; align-items: center; justify-content: center;
       cursor: pointer;
-      transition: transform 0.15s, background 0.2s;
+      transition: transform 0.15s, background 0.2s, color 0.2s;
     }
-    .icon-btn:active { transform: scale(0.88); background: var(--surface-hover); }
+    .icon-btn:active { transform: scale(0.88); background: var(--surface-hover); color: var(--text); }
+
+    /* SCROLL */
     main {
       flex: 1;
-      overflow-y: auto;
-      overflow-x: hidden;
-      padding: 0 20px 100px;
+      overflow-y: auto; overflow-x: hidden;
+      padding: 0 0 110px;
     }
     main::-webkit-scrollbar { display: none; }
+
+    /* HERO */
     .hero {
-      padding: 12px 4px 28px;
+      padding: 28px 20px 24px;
+      text-align: center;
     }
-    .hero-label {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin-bottom: 6px;
+    .hero-eyebrow {
+      font-size: 12px; font-weight: 500;
+      color: var(--text-tertiary);
+      letter-spacing: 0.04em; text-transform: uppercase;
+      margin-bottom: 8px;
     }
     .hero-amount {
-      font-size: 46px;
-      font-weight: 800;
-      letter-spacing: -1.5px;
+      font-size: 48px; font-weight: 300;
+      letter-spacing: -2px; line-height: 1;
       font-variant-numeric: tabular-nums;
-      line-height: 1.1;
-      word-break: break-all;
     }
-    .hero-amount.cash {
-      background: linear-gradient(135deg, #34d399, #10b981);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+    .hero-amount .currency {
+      font-size: 22px; font-weight: 400;
+      letter-spacing: -0.5px; opacity: 0.7;
+      vertical-align: super; margin-right: 2px;
     }
-    .hero-amount.cards {
-      background: linear-gradient(135deg, #60a5fa, #818cf8);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+    .hero-amount.cash { color: var(--green); }
+    .hero-amount.cards { color: var(--blue); }
+
+    /* QUICK ACTIONS */
+    .quick-actions {
+      display: flex; gap: 10px;
+      padding: 0 20px 28px;
     }
-    .actions {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 28px;
-    }
-    .action-btn {
-      flex: 1;
-      height: 56px;
-      border-radius: var(--radius-lg);
-      border: none;
-      font-size: 15px;
-      font-weight: 700;
+    .qa-btn {
+      flex: 1; height: 50px;
+      border-radius: var(--r-pill); border: none;
+      font-size: 15px; font-weight: 600;
+      font-family: inherit;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: all 0.2s var(--smooth);
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      transition: all 0.2s var(--ease-out);
+      letter-spacing: -0.2px;
     }
-    .action-btn:active { transform: scale(0.96); }
-    .action-btn.add {
-      background: var(--accent-cash);
-      color: #064e3b;
-      box-shadow: 0 4px 24px rgba(16,185,129,0.25);
-    }
-    .action-btn.spend {
-      background: var(--surface-raised);
-      color: var(--text);
+    .qa-btn:active { transform: scale(0.96); }
+    .qa-btn.primary-green { background: var(--green); color: #011905; }
+    .qa-btn.primary-blue { background: var(--blue); color: #fff; }
+    .qa-btn.secondary {
+      background: var(--surface-raised); color: var(--text);
       border: 1px solid var(--border);
     }
-    .action-btn.add-card {
-      background: var(--accent-card);
-      color: white;
-      box-shadow: 0 4px 24px rgba(59,130,246,0.25);
+
+    /* SECTION HEADER */
+    .section-header {
+      display: flex; align-items: baseline; justify-content: space-between;
+      padding: 0 20px 12px;
     }
-    .section-title {
-      font-size: 11px;
-      font-weight: 700;
+    .section-label { font-size: 20px; font-weight: 600; letter-spacing: -0.5px; }
+    .section-count { font-size: 13px; color: var(--text-tertiary); font-weight: 500; }
+
+    /* TX LIST */
+    .date-group-label {
+      font-size: 12px; font-weight: 600;
       color: var(--text-tertiary);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin: 24px 4px 10px;
+      padding: 16px 20px 8px;
+      text-transform: uppercase; letter-spacing: 0.05em;
     }
-    .date-group {
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--text-secondary);
-      padding: 16px 4px 8px;
-    }
-    .tx-list { display: flex; flex-direction: column; gap: 8px; }
-    .tx-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 16px;
+    .tx-group {
       background: var(--surface-raised);
-      border-radius: var(--radius-md);
-      cursor: pointer;
-      transition: all 0.15s;
-      border: 1px solid var(--border);
-    }
-    .tx-item:active { transform: scale(0.98); background: var(--surface-hover); }
-    .tx-left { display: flex; align-items: center; gap: 14px; }
-    .tx-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: var(--radius-sm);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      flex-shrink: 0;
-      background: var(--surface);
-    }
-    .tx-icon.in { color: var(--accent-cash); }
-    .tx-icon.out { color: var(--danger); }
-    .tx-info { display: flex; flex-direction: column; gap: 3px; }
-    .tx-title { font-size: 15px; font-weight: 600; }
-    .tx-date { font-size: 12px; color: var(--text-tertiary); font-weight: 500; }
-    .tx-amount {
-      font-size: 16px;
-      font-weight: 700;
-      font-variant-numeric: tabular-nums;
-    }
-    .tx-amount.in { color: var(--accent-cash); }
-    .tx-amount.out { color: var(--text); }
-    .cards-grid { display: grid; gap: 16px; padding-bottom: 20px; }
-    .card-visual {
-      border-radius: var(--radius-xl);
-      padding: 24px;
-      cursor: pointer;
-      transition: all 0.3s var(--smooth);
-      position: relative;
+      border-radius: var(--r-md);
       overflow: hidden;
-      aspect-ratio: 1.586;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      border: 1px solid rgba(255,255,255,0.08);
+      margin: 0 20px 2px;
+      border: 1px solid var(--border-subtle);
     }
-    .card-visual:active { transform: scale(0.98) translateY(2px); }
-    .card-shine {
-      position: absolute;
-      inset: -50%;
-      width: 200%;
-      height: 200%;
-      background: linear-gradient(to bottom right, rgba(255,255,255,0) 40%, rgba(255,255,255,0.07) 50%, rgba(255,255,255,0) 60%);
-      transform: rotate(25deg);
-      pointer-events: none;
-    }
-    .card-chip {
-      width: 40px;
-      height: 30px;
-      background: linear-gradient(135deg, #fbbf24, #d97706);
-      border-radius: 6px;
+    .tx-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 13px 16px;
+      cursor: pointer; transition: background 0.1s;
       position: relative;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-      z-index: 2;
     }
-    .card-chip::before, .card-chip::after {
+    .tx-item:not(:last-child)::after {
       content: '';
-      position: absolute;
-      border: 1px solid rgba(0,0,0,0.2);
-      border-radius: 4px;
+      position: absolute; bottom: 0; left: 62px; right: 0;
+      height: 1px; background: var(--border-subtle);
     }
-    .card-chip::before { inset: 4px; }
-    .card-chip::after { inset: 8px; border-radius: 2px; }
-    .card-top { display: flex; justify-content: space-between; align-items: flex-start; position: relative; z-index: 2; }
-    .card-contactless { font-size: 20px; opacity: 0.5; }
-    .card-name { font-size: 18px; font-weight: 700; color: white; z-index: 2; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
-    .card-type { font-size: 12px; color: rgba(255,255,255,0.7); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; z-index: 2; }
-    .card-balance { font-size: 26px; font-weight: 800; color: white; font-variant-numeric: tabular-nums; z-index: 2; text-shadow: 0 1px 2px rgba(0,0,0,0.2); margin-top: 4px; }
-    .empty {
-      text-align: center;
-      padding: 60px 20px;
-      color: var(--text-tertiary);
-    }
-    .empty-icon {
-      width: 80px;
-      height: 80px;
-      background: var(--surface-raised);
+    .tx-item:active { background: var(--surface-hover); }
+
+    .tx-left { display: flex; align-items: center; gap: 13px; }
+    .tx-icon {
+      width: 38px; height: 38px;
       border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 36px;
-      margin: 0 auto 16px;
-      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 17px; flex-shrink: 0;
     }
-    .empty-title { font-size: 17px; font-weight: 700; color: var(--text-secondary); margin-bottom: 4px; }
-    .empty-desc { font-size: 14px; }
+    .tx-icon.in { background: var(--green-dim); }
+    .tx-icon.out { background: var(--red-dim); }
+
+    .tx-info { display: flex; flex-direction: column; gap: 2px; }
+    .tx-title { font-size: 15px; font-weight: 500; letter-spacing: -0.1px; }
+    .tx-date { font-size: 12px; color: var(--text-tertiary); }
+
+    .tx-amount {
+      font-size: 15px; font-weight: 600;
+      font-variant-numeric: tabular-nums; letter-spacing: -0.3px;
+    }
+    .tx-amount.in { color: var(--green); }
+    .tx-amount.out { color: var(--text); }
+
+    /* CARDS */
+    .cards-stack {
+      display: flex; flex-direction: column;
+      gap: 16px; padding: 0 20px;
+    }
+    .wallet-card {
+      border-radius: var(--r-card);
+      padding: 22px 24px 20px;
+      cursor: pointer; position: relative; overflow: hidden;
+      aspect-ratio: 1.586;
+      display: flex; flex-direction: column; justify-content: space-between;
+      transition: transform 0.3s var(--spring-soft), box-shadow 0.3s var(--ease-out);
+      border: 1px solid rgba(255,255,255,0.09);
+    }
+    .wallet-card:active { transform: scale(0.975) translateY(2px); }
+
+    .card-shimmer {
+      position: absolute; inset: 0;
+      background: linear-gradient(125deg, rgba(255,255,255,0) 30%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0) 70%);
+      pointer-events: none; z-index: 1;
+    }
+    .card-noise {
+      position: absolute; inset: 0;
+      opacity: 0.025; pointer-events: none; z-index: 1;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 100px 100px;
+    }
+    .card-top-row {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      position: relative; z-index: 2;
+    }
+    .emv-chip {
+      width: 34px; height: 26px; border-radius: 5px;
+      background: linear-gradient(135deg, #e8c97a 0%, #c9a227 40%, #e8c97a 70%, #b8911e 100%);
+      position: relative;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+    }
+    .emv-chip::before {
+      content: ''; position: absolute; inset: 5px;
+      border-radius: 3px; border: 1px solid rgba(0,0,0,0.18);
+    }
+    .emv-chip::after {
+      content: ''; position: absolute;
+      left: 50%; top: 0; bottom: 0; width: 1px;
+      background: rgba(0,0,0,0.15); transform: translateX(-50%);
+    }
+    .nfc-icon {
+      display: flex; align-items: center; justify-content: center;
+      width: 22px; height: 22px; opacity: 0.55;
+    }
+    .nfc-icon svg { width: 20px; height: 20px; }
+
+    .card-bottom { position: relative; z-index: 2; }
+    .card-type-badge {
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: rgba(255,255,255,0.5); margin-bottom: 5px;
+    }
+    .card-name-label {
+      font-size: 16px; font-weight: 600;
+      color: rgba(255,255,255,0.92);
+      letter-spacing: -0.2px; margin-bottom: 2px;
+    }
+    .card-balance-display {
+      font-size: 24px; font-weight: 300;
+      color: white; font-variant-numeric: tabular-nums;
+      letter-spacing: -0.8px;
+    }
+
+    /* EMPTY */
+    .empty-state {
+      display: flex; flex-direction: column; align-items: center;
+      padding: 60px 24px 40px; text-align: center;
+    }
+    .empty-icon-wrap {
+      width: 64px; height: 64px; border-radius: 18px;
+      background: var(--surface-raised); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px; margin-bottom: 16px;
+    }
+    .empty-title { font-size: 17px; font-weight: 600; margin-bottom: 5px; }
+    .empty-body { font-size: 14px; color: var(--text-secondary); line-height: 1.5; }
+
+    /* BOTTOM NAV */
     .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100%;
-      max-width: 430px;
-      background: rgba(17,17,17,0.85);
-      backdrop-filter: blur(24px) saturate(180%);
-      -webkit-backdrop-filter: blur(24px) saturate(180%);
-      border-top: 1px solid var(--border);
-      display: flex;
-      justify-content: space-around;
-      padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
+      position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 100%; max-width: 430px;
+      background: rgba(10,10,15,0.82);
+      backdrop-filter: blur(40px) saturate(200%);
+      -webkit-backdrop-filter: blur(40px) saturate(200%);
+      border-top: 1px solid rgba(255,255,255,0.05);
+      display: flex; justify-content: space-around;
+      padding: 12px 0 calc(14px + env(safe-area-inset-bottom));
       z-index: 50;
     }
     .nav-btn {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      background: none;
-      border: none;
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; gap: 4px;
+      background: none; border: none;
       color: var(--text-tertiary);
-      font-size: 11px;
-      font-weight: 700;
-      cursor: pointer;
+      font-size: 10px; font-weight: 600;
+      font-family: inherit; cursor: pointer;
       transition: color 0.2s;
-      padding: 4px;
+      letter-spacing: 0.03em; text-transform: uppercase;
     }
     .nav-btn.active { color: var(--text); }
-    .nav-icon {
-      width: 28px;
-      height: 28px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-      transition: transform 0.2s var(--spring);
+    .nav-icon-wrap {
+      width: 30px; height: 30px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 10px;
+      transition: transform 0.25s var(--spring);
     }
-    .nav-btn.active .nav-icon { transform: scale(1.1); }
+    .nav-btn.active .nav-icon-wrap { transform: scale(1.08); }
+
+    /* FAB */
     .fab {
       position: fixed;
-      bottom: calc(84px + env(safe-area-inset-bottom));
+      bottom: calc(90px + env(safe-area-inset-bottom));
       right: 20px;
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      background: white;
-      color: black;
-      border: none;
-      font-size: 28px;
-      font-weight: 300;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+      width: 52px; height: 52px; border-radius: 50%;
+      background: var(--text); color: var(--bg);
+      border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.1);
       z-index: 40;
-      transition: all 0.3s var(--spring);
+      transition: all 0.35s var(--spring-soft);
     }
     .fab:active { transform: scale(0.88); }
-    .fab.hidden { transform: scale(0) translateY(20px); opacity: 0; pointer-events: none; }
+    .fab.hidden { transform: scale(0) translateY(16px); opacity: 0; pointer-events: none; }
+
+    /* BOTTOM SHEET */
     .sheet-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 100;
-      background: rgba(0,0,0,0.65);
-      backdrop-filter: blur(6px);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.25s;
+      position: fixed; inset: 0; z-index: 100;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(8px);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s var(--ease-out);
     }
     .sheet-overlay.open { opacity: 1; pointer-events: all; }
     .sheet {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      max-width: 430px;
-      margin: 0 auto;
+      position: absolute; bottom: 0; left: 0; right: 0;
+      max-width: 430px; margin: 0 auto;
       background: var(--surface);
-      border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-      padding: 8px 24px calc(28px + env(safe-area-inset-bottom));
+      border-radius: 24px 24px 0 0;
+      padding: 10px 24px calc(32px + env(safe-area-inset-bottom));
       transform: translateY(100%);
-      transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
-      max-height: 92vh;
-      overflow-y: auto;
+      transition: transform 0.42s cubic-bezier(0.32, 0.72, 0, 1);
+      max-height: 90vh; overflow-y: auto;
+      border: 1px solid var(--border); border-bottom: none;
     }
     .sheet-overlay.open .sheet { transform: translateY(0); }
     .sheet-handle {
-      width: 36px;
-      height: 5px;
-      background: var(--surface-hover);
-      border-radius: 3px;
-      margin: 0 auto 24px;
+      width: 40px; height: 4px;
+      background: rgba(255,255,255,0.14);
+      border-radius: 2px; margin: 0 auto 28px;
     }
-    .sheet-title { font-size: 22px; font-weight: 800; margin-bottom: 24px; }
+    .sheet-title { font-size: 20px; font-weight: 700; margin-bottom: 24px; letter-spacing: -0.5px; }
+
+    /* DETAIL PANEL */
     .detail-view {
-      position: fixed;
-      top: 0;
-      bottom: 0;
-      left: 50%;
-      width: 100%;
-      max-width: 430px;
+      position: fixed; top: 0; bottom: 0;
+      left: 50%; width: 100%; max-width: 430px;
       background: var(--bg);
       transform: translateX(-50%) translateX(100%);
-      transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
-      display: flex;
-      flex-direction: column;
-      z-index: 80;
+      transition: transform 0.42s cubic-bezier(0.32, 0.72, 0, 1);
+      display: flex; flex-direction: column; z-index: 80;
     }
     .detail-view.open { transform: translateX(-50%) translateX(0); }
     .detail-header {
-      padding: 16px 20px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      border-bottom: 1px solid var(--border);
+      padding: max(env(safe-area-inset-top, 16px), 16px) 16px 12px;
+      display: flex; align-items: center; gap: 10px;
     }
-    .detail-header h2 { font-size: 20px; font-weight: 700; flex: 1; }
-    .detail-body { flex: 1; overflow-y: auto; padding: 20px; }
-    .detail-hero {
-      border-radius: var(--radius-xl);
-      padding: 28px;
-      margin-bottom: 24px;
-      position: relative;
-      overflow: hidden;
+    .detail-header h2 { font-size: 17px; font-weight: 600; flex: 1; letter-spacing: -0.3px; }
+    .detail-body { flex: 1; overflow-y: auto; padding: 0 20px 40px; }
+    .detail-body::-webkit-scrollbar { display: none; }
+    .detail-card-hero {
+      border-radius: var(--r-card);
+      padding: 22px 24px 20px; margin-bottom: 28px;
+      position: relative; overflow: hidden;
       aspect-ratio: 1.586;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      border: 1px solid rgba(255,255,255,0.08);
-      box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+      display: flex; flex-direction: column; justify-content: space-between;
+      border: 1px solid rgba(255,255,255,0.09);
     }
-    .detail-hero .card-chip { z-index: 2; }
-    .detail-hero .card-name { z-index: 2; font-size: 20px; }
-    .detail-hero .card-type { z-index: 2; }
-    .detail-balance-label { font-size: 12px; color: rgba(255,255,255,0.6); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; z-index: 2; }
-    .detail-balance-big { font-size: 36px; font-weight: 800; color: white; margin-top: 4px; font-variant-numeric: tabular-nums; z-index: 2; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
-    .field { margin-bottom: 20px; }
+    .detail-balance-label {
+      font-size: 11px; color: rgba(255,255,255,0.5);
+      font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.08em; margin-bottom: 4px;
+      position: relative; z-index: 2;
+    }
+    .detail-balance-value {
+      font-size: 34px; font-weight: 300;
+      color: white; font-variant-numeric: tabular-nums;
+      letter-spacing: -1.2px; position: relative; z-index: 2;
+    }
+
+    /* FORM */
+    .field { margin-bottom: 18px; }
     .field-label {
-      display: block;
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--text-secondary);
-      margin-bottom: 8px;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
+      display: block; font-size: 12px; font-weight: 600;
+      color: var(--text-secondary); margin-bottom: 8px;
+      text-transform: uppercase; letter-spacing: 0.05em;
     }
     .field-input, .field-select {
-      width: 100%;
-      padding: 16px;
+      width: 100%; padding: 15px 16px;
       background: var(--bg);
       border: 1px solid var(--border);
-      border-radius: var(--radius-md);
+      border-radius: var(--r-md);
       color: var(--text);
-      font-size: 17px;
+      font-size: 16px; font-weight: 400;
       outline: none;
-      transition: all 0.2s;
-      font-family: inherit;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      font-family: inherit; letter-spacing: -0.2px;
+      -webkit-appearance: none;
     }
     .field-input:focus, .field-select:focus {
-      border-color: var(--accent-card);
-      box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
+      border-color: rgba(10,132,255,0.5);
+      box-shadow: 0 0 0 3px rgba(10,132,255,0.1);
     }
+    .field-select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(245,245,247,0.4)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 14px center;
+      padding-right: 40px;
+    }
+    .field-select option { background: #111; }
+
+    /* BUTTONS */
     .btn {
-      width: 100%;
-      padding: 18px;
-      border: none;
-      border-radius: var(--radius-md);
-      font-size: 17px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.15s;
-      font-family: inherit;
+      width: 100%; padding: 16px; border: none;
+      border-radius: var(--r-md);
+      font-size: 16px; font-weight: 600; font-family: inherit;
+      cursor: pointer; transition: all 0.15s; letter-spacing: -0.2px;
     }
     .btn:active { transform: scale(0.98); }
-    .btn-primary {
-      background: var(--accent-card);
-      color: white;
-      box-shadow: 0 4px 20px rgba(59,130,246,0.25);
-      margin-top: 8px;
-    }
-    .btn-danger {
-      background: rgba(244,63,94,0.12);
-      color: var(--danger);
-      border: 1px solid rgba(244,63,94,0.2);
-      margin-top: 8px;
-    }
-    .btn-secondary {
-      background: var(--surface-raised);
-      color: var(--text);
-      border: 1px solid var(--border);
-      margin-top: 8px;
-    }
+    .btn-primary-blue { background: var(--blue); color: white; box-shadow: 0 4px 24px rgba(10,132,255,0.25); margin-top: 8px; }
+    .btn-primary-green { background: var(--green); color: #011905; margin-top: 4px; }
+    .btn-danger { background: var(--red-dim); color: var(--red); border: 1px solid rgba(255,69,58,0.18); margin-top: 8px; }
+    .btn-secondary { background: var(--surface-raised); color: var(--text); border: 1px solid var(--border); margin-top: 8px; }
+
+    .split-btns { display: flex; gap: 10px; margin-top: 10px; }
+    .split-btns .btn { flex: 1; margin-top: 0; }
+
+    /* TOAST */
     .toast {
       position: fixed;
-      top: 16px;
-      left: 50%;
-      transform: translateX(-50%) translateY(-60px);
-      background: var(--surface-raised);
+      bottom: calc(110px + env(safe-area-inset-bottom));
+      left: 50%; transform: translateX(-50%) translateY(20px);
+      background: rgba(22,22,29,0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       color: var(--text);
-      padding: 14px 24px;
-      border-radius: 100px;
-      font-size: 14px;
-      font-weight: 700;
-      opacity: 0;
-      transition: all 0.4s var(--spring);
-      z-index: 300;
-      pointer-events: none;
+      padding: 12px 22px; border-radius: var(--r-pill);
+      font-size: 14px; font-weight: 500;
+      opacity: 0; transition: all 0.35s var(--spring);
+      z-index: 300; pointer-events: none;
       border: 1px solid var(--border);
-      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-      white-space: nowrap;
+      white-space: nowrap; letter-spacing: -0.1px;
     }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-    .hidden { display: none !important; }
+
     * { scrollbar-width: none; }
     *::-webkit-scrollbar { display: none; }
   </style>
@@ -484,24 +486,51 @@
 <body>
   <div id="app">
     <div class="app-header">
-      <h1>Dompet</h1>
-      <button class="icon-btn" onclick="app.showMenu()" aria-label="Menu">☰</button>
+      <div class="app-header-logo">
+        <div class="logo-mark">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M3 8h10M8 3v10" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <span class="app-title">Dompet</span>
+      </div>
+      <button class="icon-btn" onclick="app.showMenu()" aria-label="Menu">
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
+          <path d="M0 1h16M0 6h16M0 11h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </button>
     </div>
 
     <main id="main"></main>
 
     <div class="bottom-nav">
       <button class="nav-btn active" onclick="app.switchTab('cash')" id="nav-cash">
-        <span class="nav-icon">💵</span>
+        <div class="nav-icon-wrap">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+            <rect x="2" y="5" width="18" height="13" rx="3" stroke="currentColor" stroke-width="1.5"/>
+            <circle cx="11" cy="11.5" r="2.5" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M2 9h2M18 9h2M2 14h2M18 14h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
         <span>Cash</span>
       </button>
       <button class="nav-btn" onclick="app.switchTab('cards')" id="nav-cards">
-        <span class="nav-icon">💳</span>
+        <div class="nav-icon-wrap">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+            <rect x="2" y="5" width="18" height="13" rx="3" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M2 9h18" stroke="currentColor" stroke-width="1.5"/>
+            <rect x="4.5" y="12" width="4" height="2.5" rx="1" fill="currentColor" opacity="0.5"/>
+          </svg>
+        </div>
         <span>Cards</span>
       </button>
     </div>
 
-    <button class="fab" id="fab" onclick="app.openAdd()">+</button>
+    <button class="fab" id="fab" onclick="app.openAdd()">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <path d="M9 1v16M1 9h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+    </button>
 
     <div class="sheet-overlay" id="addSheet" onclick="if(event.target===this)app.closeAdd()">
       <div class="sheet">
@@ -513,9 +542,18 @@
 
     <div class="detail-view" id="detailView">
       <div class="detail-header">
-        <button class="icon-btn" onclick="app.closeDetail()">←</button>
+        <button class="icon-btn" onclick="app.closeDetail()">
+          <svg width="10" height="16" viewBox="0 0 10 16" fill="none">
+            <path d="M8 2L2 8l6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
         <h2 id="detailTitle">Card</h2>
-        <button class="icon-btn" onclick="app.deleteCard()" style="color:var(--danger)" aria-label="Delete">🗑</button>
+        <button class="icon-btn" onclick="app.deleteCard()" style="color:var(--red)" aria-label="Delete">
+          <svg width="14" height="16" viewBox="0 0 14 16" fill="none">
+            <path d="M1 4h12M5 4V2.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5V4M2 4l.8 9.5a.5.5 0 0 0 .5.5h7.4a.5.5 0 0 0 .5-.5L12 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M5.5 7v4M8.5 7v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </button>
       </div>
       <div class="detail-body" id="detailBody"></div>
     </div>
@@ -523,11 +561,26 @@
     <div class="sheet-overlay" id="menuSheet" onclick="if(event.target===this)app.closeMenu()">
       <div class="sheet">
         <div class="sheet-handle"></div>
-        <div class="sheet-title">Menu</div>
-        <button class="btn btn-secondary" onclick="app.exportData()">📤 Export Backup</button>
+        <div class="sheet-title">Settings</div>
+        <button class="btn btn-secondary" onclick="app.exportData()">
+          <span style="display:flex;align-items:center;justify-content:center;gap:8px">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v9M4 8l4 4 4-4M2 13h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Export Backup
+          </span>
+        </button>
         <input type="file" id="importInput" style="display:none" accept=".json" onchange="app.importData(this)">
-        <button class="btn btn-secondary" onclick="document.getElementById('importInput').click()">📥 Import Backup</button>
-        <button class="btn btn-danger" onclick="app.clearAll()">⚠️ Clear All Data</button>
+        <button class="btn btn-secondary" onclick="document.getElementById('importInput').click()">
+          <span style="display:flex;align-items:center;justify-content:center;gap:8px">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 14V5M4 8L8 4l4 4M2 3h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Import Backup
+          </span>
+        </button>
+        <button class="btn btn-danger" onclick="app.clearAll()">
+          <span style="display:flex;align-items:center;justify-content:center;gap:8px">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M8 5v4M8 11v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            Clear All Data
+          </span>
+        </button>
       </div>
     </div>
 
@@ -539,22 +592,24 @@
       tab: 'cash',
       data: { cash: { balance: 0, history: [] }, cards: [] },
       currentCardId: null,
+
       cardPalettes: [
-        { bg: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #312e81 100%)', shadow: 'rgba(30,58,138,0.35)' },
-        { bg: 'linear-gradient(135deg, #701a75 0%, #86198f 50%, #581c87 100%)', shadow: 'rgba(134,25,143,0.35)' },
-        { bg: 'linear-gradient(135deg, #064e3b 0%, #065f46 50%, #115e59 100%)', shadow: 'rgba(6,78,59,0.35)' },
-        { bg: 'linear-gradient(135deg, #7c2d12 0%, #9a3412 50%, #7c2d12 100%)', shadow: 'rgba(154,52,18,0.35)' },
-        { bg: 'linear-gradient(135deg, #1f2937 0%, #374151 50%, #1f2937 100%)', shadow: 'rgba(31,41,55,0.35)' },
+        { bg: 'linear-gradient(140deg,#0f1923 0%,#1a2e4a 60%,#0d2038 100%)' },
+        { bg: 'linear-gradient(140deg,#1a0a2e 0%,#2d1155 60%,#130824 100%)' },
+        { bg: 'linear-gradient(140deg,#0a1f14 0%,#0e3320 60%,#061510 100%)' },
+        { bg: 'linear-gradient(140deg,#1f0f08 0%,#3d1a0a 60%,#1a0d05 100%)' },
+        { bg: 'linear-gradient(140deg,#111318 0%,#1c2030 60%,#0d0f18 100%)' },
+        { bg: 'linear-gradient(140deg,#1a0e14 0%,#331528 60%,#120a10 100%)' },
       ],
 
       init() {
-        const raw = localStorage.getItem('dompet_data');
-        if (raw) this.data = JSON.parse(raw);
+        try {
+          const raw = localStorage.getItem('dompet_data');
+          if (raw) this.data = JSON.parse(raw);
+        } catch(e) {}
         this.render();
         if ('serviceWorker' in navigator) {
-          navigator.serviceWorker.register('./sw.js')
-            .then(() => console.log('SW registered'))
-            .catch(err => console.log('SW failed', err));
+          navigator.serviceWorker.register('./sw.js').catch(() => {});
         }
       },
 
@@ -563,7 +618,7 @@
       },
 
       idr(n) {
-        return 'Rp ' + Math.round(n).toLocaleString('id-ID');
+        return 'Rp\u202f' + Math.round(n).toLocaleString('id-ID');
       },
 
       formatDate(ts) {
@@ -572,7 +627,7 @@
         const yest = new Date(now); yest.setDate(yest.getDate() - 1);
         if (d.toDateString() === now.toDateString()) return 'Today';
         if (d.toDateString() === yest.toDateString()) return 'Yesterday';
-        return d.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'short' });
+        return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
       },
 
       switchTab(t) {
@@ -590,60 +645,93 @@
         if (this.tab === 'cash') {
           main.innerHTML = `
             <div class="hero">
-              <div class="hero-label">Cash on Hand</div>
-              <div class="hero-amount cash">${this.idr(this.data.cash.balance)}</div>
+              <div class="hero-eyebrow">Cash on Hand</div>
+              <div class="hero-amount cash">
+                <span class="currency">Rp</span>${Math.round(this.data.cash.balance).toLocaleString('id-ID')}
+              </div>
             </div>
-            <div class="actions">
-              <button class="action-btn add" onclick="app.cashPrompt(1)">+ Add Cash</button>
-              <button class="action-btn spend" onclick="app.cashPrompt(-1)">− Spend</button>
+            <div class="quick-actions">
+              <button class="qa-btn primary-green" onclick="app.openAdd()">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                Add
+              </button>
+              <button class="qa-btn secondary" onclick="app.openSpend()">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 7h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                Spend
+              </button>
             </div>
             ${this.renderTxList(this.data.cash.history, true)}
           `;
         } else {
           const total = this.data.cards.reduce((s, c) => s + (c.balance || 0), 0);
+          const count = this.data.cards.length;
           main.innerHTML = `
             <div class="hero">
-              <div class="hero-label">Total Card Balance</div>
-              <div class="hero-amount cards">${this.idr(total)}</div>
-            </div>
-            <div class="actions">
-              <button class="action-btn add-card" onclick="app.openAdd()">+ Add Card</button>
-            </div>
-            <div class="section-title">Your Cards</div>
-            ${this.data.cards.length === 0 ? `
-              <div class="empty">
-                <div class="empty-icon">💳</div>
-                <div class="empty-title">No cards yet</div>
-                <div class="empty-desc">Tap + to add your first card</div>
+              <div class="hero-eyebrow">Total Card Balance</div>
+              <div class="hero-amount cards">
+                <span class="currency">Rp</span>${Math.round(total).toLocaleString('id-ID')}
               </div>
-            ` : `<div class="cards-grid">${this.data.cards.map((card, i) => {
-              const pal = this.cardPalettes[i % this.cardPalettes.length];
-              return `
-                <div class="card-visual" onclick="app.openCard('${card.id}')" style="background:${pal.bg};box-shadow:0 10px 30px ${pal.shadow}">
-                  <div class="card-shine"></div>
-                  <div class="card-top">
-                    <div class="card-chip"></div>
-                    <div class="card-contactless">📶</div>
-                  </div>
-                  <div>
-                    <div class="card-type">${card.type}</div>
-                    <div class="card-name">${card.name}</div>
-                    <div class="card-balance">${this.idr(card.balance || 0)}</div>
-                  </div>
+            </div>
+            <div class="section-header">
+              <span class="section-label">My Cards</span>
+              ${count ? `<span class="section-count">${count} card${count > 1 ? 's' : ''}</span>` : ''}
+            </div>
+            ${count === 0 ? `
+              <div class="empty-state">
+                <div class="empty-icon-wrap">
+                  <svg width="28" height="22" viewBox="0 0 28 22" fill="none">
+                    <rect x="1" y="1" width="26" height="20" rx="4" stroke="rgba(245,245,247,0.3)" stroke-width="1.5"/>
+                    <path d="M1 8h26" stroke="rgba(245,245,247,0.3)" stroke-width="1.5"/>
+                    <rect x="4.5" y="13" width="6" height="3" rx="1.5" fill="rgba(245,245,247,0.2)"/>
+                  </svg>
                 </div>
-              `;
-            }).join('')}</div>`}
+                <div class="empty-title">No cards yet</div>
+                <div class="empty-body">Tap + to add your first card and start tracking balances.</div>
+              </div>
+            ` : `
+              <div class="cards-stack">
+                ${this.data.cards.map((card, i) => {
+                  const pal = this.cardPalettes[i % this.cardPalettes.length];
+                  return `
+                    <div class="wallet-card" onclick="app.openCard('${card.id}')" style="background:${pal.bg};box-shadow:0 16px 40px rgba(0,0,0,0.5),0 0 0 1px rgba(255,255,255,0.07)">
+                      <div class="card-shimmer"></div>
+                      <div class="card-noise"></div>
+                      <div class="card-top-row">
+                        <div class="emv-chip"></div>
+                        <div class="nfc-icon">
+                          <svg viewBox="0 0 20 20" fill="none">
+                            <path d="M10 10 C10 7.5,12 6,14 7.5" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
+                            <path d="M10 10 C10 5.5,15 3.5,17 7" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
+                            <circle cx="10" cy="10" r="1.2" fill="white"/>
+                          </svg>
+                        </div>
+                      </div>
+                      <div class="card-bottom">
+                        <div class="card-type-badge">${card.type}</div>
+                        <div class="card-name-label">${card.name}</div>
+                        <div class="card-balance-display">${this.idr(card.balance || 0)}</div>
+                      </div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            `}
           `;
-          if (this.data.cards.length === 0) fab.classList.add('hidden');
+          // FAB always visible on cards tab so user can add their first card
         }
       },
 
       renderTxList(history, allowDelete) {
         if (!history.length) return `
-          <div class="empty" style="padding-top:40px">
-            <div class="empty-icon">📋</div>
+          <div class="empty-state">
+            <div class="empty-icon-wrap">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <rect x="2" y="3" width="20" height="18" rx="3" stroke="rgba(245,245,247,0.3)" stroke-width="1.5"/>
+                <path d="M7 8h10M7 12h7M7 16h4" stroke="rgba(245,245,247,0.3)" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
             <div class="empty-title">No transactions</div>
-            <div class="empty-desc">Your history will appear here</div>
+            <div class="empty-body">Your history will appear here.</div>
           </div>
         `;
 
@@ -654,47 +742,39 @@
           groups[label].push(tx);
         });
 
-        return Object.entries(groups).map(([label, txs]) => `
-          <div class="date-group">${label}</div>
-          <div class="tx-list">${txs.map(tx => `
-            <div class="tx-item" ${allowDelete ? `onclick="if(confirm('Delete this entry?'))app.deleteCashTx(${history.length - 1 - history.slice().reverse().indexOf(tx)})"` : ''}>
-              <div class="tx-left">
-                <div class="tx-icon ${tx.amount > 0 ? 'in' : 'out'}">${tx.amount > 0 ? '↓' : '↑'}</div>
-                <div class="tx-info">
-                  <div class="tx-title">${tx.note || (tx.amount > 0 ? 'Cash In' : 'Cash Out')}</div>
-                  <div class="tx-date">${new Date(tx.date).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}</div>
+        return '<div style="padding-bottom:8px">' + Object.entries(groups).map(([label, txs]) => `
+          <div class="date-group-label">${label}</div>
+          <div class="tx-group">
+            ${txs.map(tx => {
+              const isIn = tx.amount > 0;
+              const idx = history.length - 1 - history.slice().reverse().indexOf(tx);
+              return `
+                <div class="tx-item" ${allowDelete ? `onclick="if(confirm('Delete this entry?'))app.deleteCashTx(${idx})"` : ''}>
+                  <div class="tx-left">
+                    <div class="tx-icon ${isIn ? 'in' : 'out'}">
+                      ${isIn
+                        ? `<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 11V3M3 7l4-4 4 4" stroke="var(--green)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+                        : `<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 3v8M3 7l4 4 4-4" stroke="var(--red)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+                      }
+                    </div>
+                    <div class="tx-info">
+                      <div class="tx-title">${tx.note || (isIn ? 'Cash In' : 'Cash Out')}</div>
+                      <div class="tx-date">${new Date(tx.date).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}</div>
+                    </div>
+                  </div>
+                  <div class="tx-amount ${isIn ? 'in' : 'out'}">${isIn ? '+' : '−'}${this.idr(Math.abs(tx.amount))}</div>
                 </div>
-              </div>
-              <div class="tx-amount ${tx.amount > 0 ? 'in' : ''}">${tx.amount > 0 ? '+' : ''}${this.idr(Math.abs(tx.amount))}</div>
-            </div>
-          `).join('')}</div>
-        `).join('');
+              `;
+            }).join('')}
+          </div>
+        `).join('') + '</div>';
       },
 
       deleteCashTx(index) {
         this.data.cash.history.splice(index, 1);
         this.recalcCash();
-        this.save();
-        this.render();
+        this.save(); this.render();
         this.toast('Deleted');
-      },
-
-      cashPrompt(dir) {
-        const raw = prompt(dir > 0 ? 'Jumlah masuk:' : 'Jumlah keluar:');
-        if (!raw) return;
-        const amt = Math.round(parseFloat(raw.replace(/\./g, '').replace(/,/g, '.')));
-        if (!amt || amt <= 0) return;
-        const note = prompt('Catatan (opsional):') || '';
-        this.data.cash.history.push({ amount: dir * amt, note, date: Date.now() });
-        this.recalcCash();
-        this.save();
-        this.render();
-        this.toast(dir > 0 ? 'Cash ditambahkan' : 'Cash dikurangi');
-      },
-
-      recalcCash() {
-        this.data.cash.balance = this.data.cash.history.reduce((s, t) => s + t.amount, 0);
-        if (this.data.cash.balance < 0) this.data.cash.balance = 0;
       },
 
       openAdd() {
@@ -703,28 +783,38 @@
         if (this.tab === 'cards') {
           title.textContent = 'Add Card';
           body.innerHTML = `
-            <div class="field"><label class="field-label">Card Name</label><input class="field-input" id="cName" placeholder="e.g. BCA Debit"></div>
+            <div class="field"><label class="field-label">Card Name</label><input class="field-input" id="cName" placeholder="e.g. BCA Debit" autocomplete="off"></div>
             <div class="field"><label class="field-label">Type</label>
-              <select class="field-select" id="cType">
-                <option>Debit</option><option>Credit</option><option>e-Money</option><option>Prepaid</option><option>Other</option>
-              </select>
+              <select class="field-select" id="cType"><option>Debit</option><option>Credit</option><option>e-Money</option><option>Prepaid</option><option>Other</option></select>
             </div>
-            <div class="field"><label class="field-label">Current Balance</label><input class="field-input" id="cBal" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="0"></div>
-            <button class="btn btn-primary" onclick="app.addCard()">Save Card</button>
+            <div class="field"><label class="field-label">Starting Balance</label><input class="field-input" id="cBal" type="text" inputmode="numeric" placeholder="0" autocomplete="off"></div>
+            <button class="btn btn-primary-blue" onclick="app.addCard()">Save Card</button>
           `;
         } else {
           title.textContent = 'Add Cash';
           body.innerHTML = `
-            <div class="field"><label class="field-label">Amount</label><input class="field-input" id="cAmt" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="0"></div>
-            <div class="field"><label class="field-label">Note</label><input class="field-input" id="cNote" placeholder="e.g. ATM withdrawal"></div>
-            <div class="actions" style="margin-top:8px">
-              <button class="action-btn add" style="flex:1" onclick="app.addCash(1)">+ Income</button>
-              <button class="action-btn spend" style="flex:1" onclick="app.addCash(-1)">− Expense</button>
+            <div class="field"><label class="field-label">Amount</label><input class="field-input" id="cAmt" type="text" inputmode="numeric" placeholder="0" autocomplete="off"></div>
+            <div class="field"><label class="field-label">Note</label><input class="field-input" id="cNote" placeholder="e.g. ATM withdrawal" autocomplete="off"></div>
+            <div class="split-btns">
+              <button class="btn btn-primary-green" onclick="app.addCash(1)">+ Income</button>
+              <button class="btn btn-secondary" onclick="app.addCash(-1)">− Expense</button>
             </div>
           `;
         }
         document.getElementById('addSheet').classList.add('open');
-        setTimeout(() => body.querySelector('input')?.focus(), 100);
+        setTimeout(() => body.querySelector('input')?.focus(), 150);
+      },
+
+      openSpend() {
+        const body = document.getElementById('addBody');
+        document.getElementById('addTitle').textContent = 'Spend Cash';
+        body.innerHTML = `
+          <div class="field"><label class="field-label">Amount</label><input class="field-input" id="cAmt" type="text" inputmode="numeric" placeholder="0" autocomplete="off"></div>
+          <div class="field"><label class="field-label">Note</label><input class="field-input" id="cNote" placeholder="e.g. Groceries" autocomplete="off"></div>
+          <button class="btn btn-secondary" onclick="app.addCash(-1)">− Record Spend</button>
+        `;
+        document.getElementById('addSheet').classList.add('open');
+        setTimeout(() => body.querySelector('input')?.focus(), 150);
       },
 
       closeAdd() {
@@ -733,31 +823,27 @@
 
       addCash(dir) {
         const raw = document.getElementById('cAmt').value;
-        const amt = Math.round(parseFloat(raw.replace(/\./g, '').replace(/,/g, '.')));
-        if (!amt || amt <= 0) return this.toast('Enter amount');
-        const note = document.getElementById('cNote').value || (dir > 0 ? 'Cash In' : 'Cash Out');
+        const amt = Math.round(parseFloat(raw.replace(/\./g,'').replace(/,/g,'.')) || 0);
+        if (!amt || amt <= 0) return this.toast('Enter a valid amount');
+        const note = document.getElementById('cNote').value.trim() || (dir > 0 ? 'Cash In' : 'Cash Out');
         this.data.cash.history.push({ amount: dir * amt, note, date: Date.now() });
-        this.recalcCash();
-        this.save();
-        this.closeAdd();
-        this.render();
-        this.toast(dir > 0 ? 'Cash ditambahkan' : 'Cash dikurangi');
+        this.recalcCash(); this.save(); this.closeAdd(); this.render();
+        this.toast(dir > 0 ? 'Cash added' : 'Spend recorded');
       },
 
       addCard() {
         const name = document.getElementById('cName').value.trim();
         const type = document.getElementById('cType').value;
-        const bal = Math.round(parseFloat(document.getElementById('cBal').value.replace(/\./g, '').replace(/,/g, '.')) || 0);
-        if (!name) return this.toast('Enter card name');
-        this.data.cards.push({
-          id: crypto.randomUUID(),
-          name, type, balance: bal,
-          history: [{ amount: bal, note: 'Starting balance', date: Date.now() }]
-        });
-        this.save();
-        this.closeAdd();
-        this.render();
+        const bal = Math.round(parseFloat(document.getElementById('cBal').value.replace(/\./g,'').replace(/,/g,'.')) || 0);
+        if (!name) return this.toast('Enter a card name');
+        this.data.cards.push({ id: crypto.randomUUID(), name, type, balance: bal, history: [{ amount: bal, note: 'Starting balance', date: Date.now() }] });
+        this.save(); this.closeAdd(); this.render();
         this.toast('Card added');
+      },
+
+      recalcCash() {
+        this.data.cash.balance = this.data.cash.history.reduce((s, t) => s + t.amount, 0);
+        if (this.data.cash.balance < 0) this.data.cash.balance = 0;
       },
 
       openCard(id) {
@@ -766,54 +852,75 @@
         this.currentCardId = id;
         const idx = this.data.cards.indexOf(card);
         const pal = this.cardPalettes[idx % this.cardPalettes.length];
-
         document.getElementById('detailTitle').textContent = card.name;
         document.getElementById('detailBody').innerHTML = `
-          <div class="detail-hero" style="background:${pal.bg};box-shadow:0 10px 40px ${pal.shadow}">
-            <div class="card-shine"></div>
-            <div class="card-top">
-              <div class="card-chip"></div>
-              <div class="card-contactless">📶</div>
+          <div class="detail-card-hero" style="background:${pal.bg};box-shadow:0 16px 48px rgba(0,0,0,0.6),0 0 0 1px rgba(255,255,255,0.07)">
+            <div class="card-shimmer"></div>
+            <div class="card-noise"></div>
+            <div class="card-top-row">
+              <div class="emv-chip"></div>
+              <div class="nfc-icon">
+                <svg viewBox="0 0 20 20" fill="none">
+                  <path d="M10 10 C10 7.5,12 6,14 7.5" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
+                  <path d="M10 10 C10 5.5,15 3.5,17 7" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
+                  <circle cx="10" cy="10" r="1.2" fill="white"/>
+                </svg>
+              </div>
             </div>
-            <div>
-              <div class="card-type">${card.type}</div>
+            <div class="card-bottom">
+              <div class="card-type-badge">${card.type}</div>
               <div class="detail-balance-label">Current Balance</div>
-              <div class="detail-balance-big">${this.idr(card.balance || 0)}</div>
+              <div class="detail-balance-value">${this.idr(card.balance || 0)}</div>
             </div>
           </div>
-          <div class="actions" style="margin-bottom:24px">
-            <button class="action-btn add" onclick="app.adjustCard(1)">+ Top Up</button>
-            <button class="action-btn spend" onclick="app.adjustCard(-1)">− Spend</button>
+          <div class="quick-actions" style="padding:0 0 28px">
+            <button class="qa-btn primary-green" onclick="app.adjustCard(1)">
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v11M1 6.5h11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              Top Up
+            </button>
+            <button class="qa-btn secondary" onclick="app.adjustCard(-1)">
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M1 6.5h11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              Spend
+            </button>
           </div>
-          <div class="section-title">History</div>
+          <div class="section-header" style="padding:0 0 12px"><span class="section-label">History</span></div>
           ${this.renderTxList(card.history || [], false)}
         `;
         document.getElementById('detailView').classList.add('open');
       },
 
       adjustCard(dir) {
+        const body = document.getElementById('addBody');
+        document.getElementById('addTitle').textContent = dir > 0 ? 'Top Up' : 'Spend';
+        body.innerHTML = `
+          <div class="field"><label class="field-label">Amount</label><input class="field-input" id="cAmt" type="text" inputmode="numeric" placeholder="0" autocomplete="off"></div>
+          <div class="field"><label class="field-label">Note</label><input class="field-input" id="cNote" placeholder="${dir > 0 ? 'e.g. Transfer' : 'e.g. Purchase'}" autocomplete="off"></div>
+          <button class="btn ${dir > 0 ? 'btn-primary-green' : 'btn-secondary'}" onclick="app.confirmAdjust(${dir})">${dir > 0 ? '+ Confirm Top Up' : '− Confirm Spend'}</button>
+        `;
+        document.getElementById('addSheet').classList.add('open');
+        setTimeout(() => body.querySelector('input')?.focus(), 150);
+      },
+
+      confirmAdjust(dir) {
         const card = this.data.cards.find(c => c.id === this.currentCardId);
         if (!card) return;
-        const raw = prompt(dir > 0 ? 'Jumlah top up:' : 'Jumlah spend:');
-        if (!raw) return;
-        const amt = Math.round(parseFloat(raw.replace(/\./g, '').replace(/,/g, '.')));
-        if (!amt || amt <= 0) return;
-        const note = prompt('Catatan (opsional):') || (dir > 0 ? 'Top up' : 'Spend');
+        const raw = document.getElementById('cAmt').value;
+        const amt = Math.round(parseFloat(raw.replace(/\./g,'').replace(/,/g,'.')) || 0);
+        if (!amt || amt <= 0) return this.toast('Enter a valid amount');
+        const note = document.getElementById('cNote').value.trim() || (dir > 0 ? 'Top up' : 'Spend');
         card.balance = (card.balance || 0) + (dir * amt);
         if (!card.history) card.history = [];
         card.history.push({ amount: dir * amt, note, date: Date.now() });
-        this.save();
+        this.save(); this.closeAdd();
         this.openCard(this.currentCardId);
         this.render();
-        this.toast(dir > 0 ? 'Balance ditambah' : 'Balance dikurangi');
+        this.toast(dir > 0 ? 'Balance updated' : 'Spend recorded');
       },
 
       deleteCard() {
         if (!confirm('Delete this card?')) return;
         this.data.cards = this.data.cards.filter(c => c.id !== this.currentCardId);
-        this.save();
-        this.closeDetail();
-        this.render();
+        this.save(); this.closeDetail(); this.render();
         this.toast('Card deleted');
       },
 
@@ -822,13 +929,8 @@
         this.currentCardId = null;
       },
 
-      showMenu() {
-        document.getElementById('menuSheet').classList.add('open');
-      },
-
-      closeMenu() {
-        document.getElementById('menuSheet').classList.remove('open');
-      },
+      showMenu() { document.getElementById('menuSheet').classList.add('open'); },
+      closeMenu() { document.getElementById('menuSheet').classList.remove('open'); },
 
       exportData() {
         const blob = new Blob([JSON.stringify(this.data, null, 2)], { type: 'application/json' });
@@ -846,13 +948,9 @@
         reader.onload = e => {
           try {
             this.data = JSON.parse(e.target.result);
-            this.save();
-            this.render();
-            this.closeMenu();
+            this.save(); this.render(); this.closeMenu();
             this.toast('Backup restored');
-          } catch (err) {
-            this.toast('Invalid backup file');
-          }
+          } catch(err) { this.toast('Invalid backup file'); }
         };
         reader.readAsText(file);
       },
@@ -861,9 +959,7 @@
         if (!confirm('Erase all data?')) return;
         if (!confirm('This cannot be undone. Continue?')) return;
         this.data = { cash: { balance: 0, history: [] }, cards: [] };
-        this.save();
-        this.closeMenu();
-        this.render();
+        this.save(); this.closeMenu(); this.render();
         this.toast('All data cleared');
       },
 
