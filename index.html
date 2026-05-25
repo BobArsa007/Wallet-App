@@ -55,8 +55,6 @@
       display: flex;
       flex-direction: column;
       background: var(--bg);
-      max-width: 430px;
-      margin: 0 auto;
       position: relative;
     }
 
@@ -521,11 +519,9 @@
     .bottom-nav {
       position: fixed;
       bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100%;
-      max-width: 430px;
-      background: rgba(242,242,247,0.85);
+      left: 0;
+      right: 0;
+      background: rgba(242,242,247,0.92);
       backdrop-filter: blur(20px) saturate(180%);
       -webkit-backdrop-filter: blur(20px) saturate(180%);
       border-top: 1px solid var(--border);
@@ -561,7 +557,7 @@
     .fab {
       position: fixed;
       bottom: calc(76px + env(safe-area-inset-bottom));
-      right: calc(50% - 200px + 16px);
+      right: 20px;
       width: 48px;
       height: 48px;
       border-radius: 16px;
@@ -576,16 +572,12 @@
       justify-content: center;
       box-shadow: 0 4px 20px rgba(10,132,255,0.4);
       z-index: 40;
-      transition: all 0.3s var(--spring);
+      transition: transform 0.3s var(--spring), opacity 0.3s, box-shadow 0.15s;
     }
 
     .fab:active { transform: scale(0.88); }
     .fab.hidden { transform: scale(0); opacity: 0; pointer-events: none; }
     .fab svg { width: 22px; height: 22px; stroke: white; stroke-width: 2.5; }
-
-    @media (max-width: 430px) {
-      .fab { right: 16px; }
-    }
 
     /* ── SHEET ── */
     .sheet-overlay {
@@ -603,20 +595,19 @@
     .sheet {
       position: absolute;
       bottom: 0;
-      left: 50%;
-      transform: translateX(-50%) translateY(100%);
-      width: 100%;
-      max-width: 430px;
+      left: 0;
+      right: 0;
       background: var(--surface);
       border-radius: 24px 24px 0 0;
       padding: 8px 20px calc(32px + env(safe-area-inset-bottom));
       transition: transform 0.38s cubic-bezier(0.32, 0.72, 0, 1);
       max-height: 88vh;
       overflow-y: auto;
+      transform: translateY(100%);
     }
 
     .sheet-overlay.open .sheet {
-      transform: translateX(-50%) translateY(0);
+      transform: translateY(0);
     }
 
     .sheet-handle {
@@ -724,19 +715,19 @@
     /* ── DETAIL VIEW ── */
     .detail-view {
       position: fixed;
-      inset: 0;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
       background: var(--bg);
       transform: translateX(100%);
       transition: transform 0.38s cubic-bezier(0.32, 0.72, 0, 1);
       display: flex;
       flex-direction: column;
       z-index: 80;
-      max-width: 430px;
-      left: 50%;
-      translate: -50% 0;
     }
 
-    .detail-view.open { transform: translateX(0); translate: -50% 0; }
+    .detail-view.open { transform: translateX(0); }
 
     .detail-header {
       padding: 14px 16px;
