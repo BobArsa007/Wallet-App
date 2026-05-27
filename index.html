@@ -170,7 +170,7 @@
     /* ── QUICK ACTIONS ── */
     .quick-actions {
       display: flex;
-      gap: 16px;
+      gap: 12px;
       padding: 0 24px 32px;
     }
 
@@ -182,7 +182,7 @@
       gap: 10px;
       background: var(--surface);
       border: none;
-      padding: 16px;
+      padding: 16px 12px;
       border-radius: var(--radius-lg);
       cursor: pointer;
       transition: all 0.2s var(--spring);
@@ -202,6 +202,7 @@
 
     .qa-icon.green { background: rgba(0, 201, 154, 0.15); color: var(--accent-green); }
     .qa-icon.red { background: rgba(255, 77, 79, 0.15); color: var(--accent-red); }
+    .qa-icon.blue { background: rgba(37, 99, 235, 0.1); color: var(--accent-blue); }
     .qa-icon svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2.5; }
 
     .qa-label {
@@ -294,7 +295,7 @@
       position: relative;
       z-index: 3;
     }
-    
+
     .card-chip::after {
       content: '';
       position: absolute;
@@ -374,7 +375,7 @@
 
     /* ── TRANSACTION LIST ── */
     .tx-section { padding: 0 24px; }
-    
+
     .tx-container {
       background: var(--surface);
       border-radius: var(--radius-xl);
@@ -491,12 +492,12 @@
     }
 
     .nav-btn svg { width: 22px; height: 22px; stroke-width: 2.2; transition: all 0.3s var(--spring); }
-    
+
     .nav-btn.active {
       color: var(--accent-blue);
       background: rgba(37, 99, 235, 0.1);
     }
-    
+
     .nav-btn.active svg { stroke-width: 2.5; }
 
     /* ── SHEET / MODAL ── */
@@ -601,7 +602,10 @@
     .btn-secondary { background: var(--bg); color: var(--text); margin-top: 10px; font-weight: 700; }
 
     .two-btns { display: flex; gap: 12px; margin-top: 10px; }
-    .two-btns .btn { margin-top: 0; }
+    .two-btns .btn { flex: 1; margin-top: 0; }
+
+    .three-btns { display: flex; gap: 10px; margin-top: 10px; }
+    .three-btns .btn { flex: 1; margin-top: 0; padding: 16px 10px; font-size: 15px; }
 
     /* ── DETAIL VIEW ── */
     .detail-view {
@@ -655,6 +659,7 @@
 
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   </style>
+<base target="_blank">
 </head>
 <body>
   <div id="app">
@@ -787,6 +792,10 @@
               <button class="qa-btn" onclick="app.openAddWith(-1)">
                 <div class="qa-icon red"><svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12l7 7 7-7" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
                 <span class="qa-label">Spend</span>
+              </button>
+              <button class="qa-btn" onclick="app.editCashBalance()">
+                <div class="qa-icon blue"><svg viewBox="0 0 24 24" fill="none"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                <span class="qa-label">Adjust</span>
               </button>
             </div>
             <div class="section-header"><div class="section-title">Recent Activity</div></div>
@@ -1008,9 +1017,10 @@
               </div>
             </div>
           </div>
-          <div class="two-btns" style="margin-bottom:32px">
+          <div class="three-btns" style="margin-bottom:32px">
             <button class="btn btn-green" onclick="app.adjustCard(1)">+ Top Up</button>
             <button class="btn btn-primary" onclick="app.adjustCard(-1)">− Spend</button>
+            <button class="btn btn-secondary" onclick="app.editCardBalance()">Edit</button>
           </div>
           <div class="section-header" style="padding:0 0 16px"><div class="section-title">Card History</div></div>
           ${this.renderTxList(card.history || [], false)}
@@ -1033,6 +1043,42 @@
         this.openCard(this.currentCardId);
         this.render();
         this.toast(dir > 0 ? 'Balance updated' : 'Expense recorded');
+      },
+
+      editCashBalance() {
+        const current = this.data.cash.balance;
+        const raw = prompt(`Current: ${this.idr(current)}\nEnter new balance:`, current);
+        if (raw === null) return;
+        const newBal = Math.round(parseFloat(raw.replace(/\./g, '').replace(/,/g, '.')) || 0);
+        if (isNaN(newBal)) return this.toast('Invalid amount');
+        const diff = newBal - current;
+        if (diff === 0) return this.toast('No change');
+        const note = prompt('Note (optional):') || 'Balance adjustment';
+        this.data.cash.history.push({ amount: diff, note, date: Date.now() });
+        this.recalcCash();
+        this.save();
+        this.render();
+        this.toast(diff > 0 ? 'Balance increased' : 'Balance decreased');
+      },
+
+      editCardBalance() {
+        const card = this.data.cards.find(c => c.id === this.currentCardId);
+        if (!card) return;
+        const current = card.balance || 0;
+        const raw = prompt(`Current: ${this.idr(current)}\nEnter new balance:`, current);
+        if (raw === null) return;
+        const newBal = Math.round(parseFloat(raw.replace(/\./g, '').replace(/,/g, '.')) || 0);
+        if (isNaN(newBal)) return this.toast('Invalid amount');
+        const diff = newBal - current;
+        if (diff === 0) return this.toast('No change');
+        const note = prompt('Note (optional):') || 'Balance adjustment';
+        card.balance = newBal;
+        if (!card.history) card.history = [];
+        card.history.push({ amount: diff, note, date: Date.now() });
+        this.save();
+        this.openCard(this.currentCardId);
+        this.render();
+        this.toast(diff > 0 ? 'Balance increased' : 'Balance decreased');
       },
 
       deleteCard() {
