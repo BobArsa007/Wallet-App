@@ -660,6 +660,7 @@
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   </style>
 <base target="_blank">
+<base target="_blank">
 </head>
 <body>
   <div id="app">
@@ -799,7 +800,7 @@
               </button>
             </div>
             <div class="section-header"><div class="section-title">Recent Activity</div></div>
-            <div class="tx-section">${this.renderTxList(this.data.cash.history, true)}</div>
+            <div class="tx-section">${this.renderTxList(this.data.cash.history, 'cash')}</div>
           `;
         } else {
           const total = this.data.cards.reduce((s, c) => s + (c.balance || 0), 0);
@@ -855,7 +856,7 @@
         }
       },
 
-      renderTxList(history, allowDelete) {
+      renderTxList(history, mode, cardId = null) {
         if (!history.length) return `
           <div class="empty-state" style="padding-top:20px">
             <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
@@ -875,8 +876,11 @@
           <div class="tx-group-label">${label}</div>
           <div class="tx-list">${txs.map(tx => {
             const idx = history.length - 1 - history.slice().reverse().indexOf(tx);
+            const onclick = mode === 'cash'
+              ? `app.openEditCashTx(${idx})`
+              : `app.openEditCardTx('${cardId}', ${idx})`;
             return `
-              <div class="tx-item" ${allowDelete ? `onclick="if(confirm('Delete this entry?'))app.deleteCashTx(${idx})"` : ''}>
+              <div class="tx-item" onclick="${onclick}">
                 <div class="tx-left">
                   <div class="tx-icon ${tx.amount > 0 ? 'in' : 'out'}">
                     ${tx.amount > 0
@@ -902,6 +906,7 @@
         this.data.cash.history.splice(index, 1);
         this.recalcCash();
         this.save();
+        this.closeAdd();
         this.render();
         this.toast('Entry deleted');
       },
@@ -1023,7 +1028,7 @@
             <button class="btn btn-secondary" onclick="app.editCardBalance()">Edit</button>
           </div>
           <div class="section-header" style="padding:0 0 16px"><div class="section-title">Card History</div></div>
-          ${this.renderTxList(card.history || [], false)}
+          ${this.renderTxList(card.history || [], 'card', this.currentCardId)}
         `;
         document.getElementById('detailView').classList.add('open');
       },
@@ -1133,6 +1138,126 @@
         t.textContent = msg;
         t.classList.add('show');
         setTimeout(() => t.classList.remove('show'), 3000);
+      },
+
+      escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+      },
+
+      openEditCashTx(idx) {
+        const tx = this.data.cash.history[idx];
+        if (!tx) return;
+        const isIncome = tx.amount >= 0;
+        const absAmount = Math.abs(tx.amount);
+        const body = document.getElementById('addBody');
+        document.getElementById('addTitle').textContent = 'Edit Transaction';
+        body.innerHTML = `
+          <div class="field">
+            <label class="field-label">Amount</label>
+            <input class="field-input" id="eAmt" type="text" inputmode="numeric" value="${absAmount.toLocaleString('id-ID')}" autofocus>
+          </div>
+          <div class="field">
+            <label class="field-label">Note</label>
+            <input class="field-input" id="eNote" value="${this.escapeHtml(tx.note || '')}">
+          </div>
+          <div class="field">
+            <label class="field-label">Type</label>
+            <div class="segment" style="margin-top:8px">
+              <button class="seg-btn ${isIncome ? 'active' : ''}" id="eTypeIn" onclick="app.setEditType(1)">Income</button>
+              <button class="seg-btn ${!isIncome ? 'active' : ''}" id="eTypeOut" onclick="app.setEditType(-1)">Expense</button>
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="app.saveCashTx(${idx})">Save Changes</button>
+          <button class="btn btn-danger" onclick="app.deleteCashTx(${idx})" style="margin-top:10px">Delete</button>
+        `;
+        this._editDir = isIncome ? 1 : -1;
+        document.getElementById('addSheet').classList.add('open');
+      },
+
+      openEditCardTx(cardId, idx) {
+        const card = this.data.cards.find(c => c.id === cardId);
+        if (!card) return;
+        const tx = card.history[idx];
+        if (!tx) return;
+        const isIncome = tx.amount >= 0;
+        const absAmount = Math.abs(tx.amount);
+        const body = document.getElementById('addBody');
+        document.getElementById('addTitle').textContent = 'Edit Transaction';
+        body.innerHTML = `
+          <div class="field">
+            <label class="field-label">Amount</label>
+            <input class="field-input" id="eAmt" type="text" inputmode="numeric" value="${absAmount.toLocaleString('id-ID')}" autofocus>
+          </div>
+          <div class="field">
+            <label class="field-label">Note</label>
+            <input class="field-input" id="eNote" value="${this.escapeHtml(tx.note || '')}">
+          </div>
+          <div class="field">
+            <label class="field-label">Type</label>
+            <div class="segment" style="margin-top:8px">
+              <button class="seg-btn ${isIncome ? 'active' : ''}" id="eTypeIn" onclick="app.setEditType(1)">Income</button>
+              <button class="seg-btn ${!isIncome ? 'active' : ''}" id="eTypeOut" onclick="app.setEditType(-1)">Expense</button>
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="app.saveCardTx('${cardId}', ${idx})">Save Changes</button>
+          <button class="btn btn-danger" onclick="app.deleteCardTx('${cardId}', ${idx})" style="margin-top:10px">Delete</button>
+        `;
+        this._editDir = isIncome ? 1 : -1;
+        document.getElementById('addSheet').classList.add('open');
+      },
+
+      setEditType(dir) {
+        this._editDir = dir;
+        const inBtn = document.getElementById('eTypeIn');
+        const outBtn = document.getElementById('eTypeOut');
+        if (inBtn) inBtn.classList.toggle('active', dir > 0);
+        if (outBtn) outBtn.classList.toggle('active', dir < 0);
+      },
+
+      saveCashTx(idx) {
+        const tx = this.data.cash.history[idx];
+        const raw = document.getElementById('eAmt').value;
+        const amt = Math.round(parseFloat(raw.replace(/\./g, '').replace(/,/g, '.')) || 0);
+        if (!amt || amt <= 0) return this.toast('Enter a valid amount');
+        const note = document.getElementById('eNote').value.trim() || (this._editDir > 0 ? 'Income' : 'Expense');
+        tx.amount = this._editDir * amt;
+        tx.note = note;
+        this.recalcCash();
+        this.save();
+        this.closeAdd();
+        this.render();
+        this.toast('Transaction updated');
+      },
+
+      saveCardTx(cardId, idx) {
+        const card = this.data.cards.find(c => c.id === cardId);
+        if (!card) return;
+        const tx = card.history[idx];
+        const raw = document.getElementById('eAmt').value;
+        const amt = Math.round(parseFloat(raw.replace(/\./g, '').replace(/,/g, '.')) || 0);
+        if (!amt || amt <= 0) return this.toast('Enter a valid amount');
+        const note = document.getElementById('eNote').value.trim() || (this._editDir > 0 ? 'Top up' : 'Card Spend');
+        tx.amount = this._editDir * amt;
+        tx.note = note;
+        card.balance = card.history.reduce((s, t) => s + t.amount, 0);
+        this.save();
+        this.closeAdd();
+        this.openCard(cardId);
+        this.render();
+        this.toast('Transaction updated');
+      },
+
+      deleteCardTx(cardId, idx) {
+        const card = this.data.cards.find(c => c.id === cardId);
+        if (!card) return;
+        card.history.splice(idx, 1);
+        card.balance = card.history.reduce((s, t) => s + t.amount, 0);
+        this.save();
+        this.closeAdd();
+        this.openCard(cardId);
+        this.render();
+        this.toast('Entry deleted');
       }
     };
 
