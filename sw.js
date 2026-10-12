@@ -1,9 +1,13 @@
-const CACHE_NAME = 'dompet-v1';
+const CACHE_NAME = 'dompet-v2';
 const PRECACHE = [
   './',
   './index.html',
   './manifest.json',
-  './icon.svg'
+  './icon-192.png',
+  './icon-512.png',
+  './icon-maskable-512.png',
+  './apple-touch-icon.png',
+  './favicon-32.png'
 ];
 
 self.addEventListener('install', e => {

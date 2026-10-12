@@ -659,8 +659,10 @@
 
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   </style>
-<base target="_blank">
-<base target="_blank">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+  <meta name="mobile-web-app-capable" content="yes">
 </head>
 <body>
   <div id="app">
@@ -1262,6 +1264,12 @@
     };
 
     app.init();
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(() => {});
+      });
+    }
   </script>
 </body>
 </html>
