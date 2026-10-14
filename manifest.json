@@ -4,7 +4,7 @@
   "description": "Offline cash & card tracker",
   "start_url": ".",
   "display": "standalone",
-  "background_color": "#000000",
+  "background_color": "#1c1f27",
   "theme_color": "#000000",
   "orientation": "portrait",
   "icons": [
