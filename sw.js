@@ -1,6 +1,6 @@
 // Dompet service worker: offline app shell + Google Fonts cache.
 // Bump CACHE when you want every installed copy to fully refresh.
-const CACHE = 'dompet-v2';
+const CACHE = 'dompet-v3';
 const FONT_CACHE = 'dompet-fonts-v1';
 
 const APP_SHELL = [
